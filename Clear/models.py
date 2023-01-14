@@ -86,6 +86,7 @@ class UserInhaler(models.Model):
 
     def add_inhaler(self):
         # TODO Complete
+        print("hello anna")
         pass
 
     # To reset puffs today to zero every day

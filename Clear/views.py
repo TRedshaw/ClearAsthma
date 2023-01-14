@@ -48,22 +48,29 @@ class SettingsView(LoginRequiredMixin, UpdateView):
     login_url = '/clear/login/'
     def get(self, request):
         user = get_object_or_404(AppUser, id = request.user.id)
-        inhalers = Inhalers.objects.filter(user = request.user)
+        print("user",user)
+        inhalers = Inhalers.objects.filter(inhaler_user = user.id)
+        for inhaler in inhalers:
+            print("GET inhaler:",inhaler)
         user_form = self.user_form(instance = user)
         return render(request, self.template_name, context= {"form":user_form,"inhalers":inhalers})
 
     def post(self,request):
+        print("post inside")
         user = get_object_or_404(AppUser, id = request.user.id)
         form_class = SettingsForm(request.POST,instance = user)
         if form_class.is_valid():
             print(request.POST)
             form_class.save()
             inhaler_id = request.POST.getlist('inhaler_id')
+            print("POST inhaler_id:", inhaler_id)
             inhaler_type = request.POST.getlist('inhaler_type')
+            print("POST inhaler_type:", inhaler_type)
             puff_remaining = request.POST.getlist('puff_remaining')
             puffs = request.POST.getlist('puffs')
             per_day = request.POST.getlist('per_day')
             if inhaler_type and puff_remaining and per_day:
+                print("POST inside:")
                 all_user_inhalers = [{
                     'inhaler_id': inhaler_id,
                     "type": type,
@@ -90,13 +97,13 @@ class SettingsView(LoginRequiredMixin, UpdateView):
 
 def add_inhaler(request):
     user = request.user
-    inhaler_type = request.POST.get('inhaler_type')
+    inhaler_id = request.POST.get('inhaler_id')
     puff_remaining = request.POST.get('Puffs_Remaining')
     per_day = request.POST.get('Per_Day')
-    if inhaler_type and puff_remaining and per_day:
+    if inhaler_id and puff_remaining and per_day:
         obj = UserInhaler.objects.create(
             user_id=user,
-            inhaler_type=inhaler_type,
+            inhaler_id=inhaler_id,
             puffs_remaining=puff_remaining,
             puffs_per_day=per_day,
         )
