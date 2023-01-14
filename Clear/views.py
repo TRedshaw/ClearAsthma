@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import UpdateView, CreateView
 from Clear.forms import RegisterForm, SettingsForm
-from Clear.models import AppUser, UserInhaler ,Inhaler, Inhalers
+from Clear.models import AppUser, UserInhaler, Inhalers
 from django.shortcuts import get_object_or_404
 # from django.views import View
 from django.views.generic import View
@@ -122,7 +122,7 @@ def delete_inhaler(request, *args, **kwargs):
 def logInhalerPuff(request, user_inhaler_id):
     if UserInhaler.log_puff(user_inhaler_id) is not None:
         return redirect(reverse_lazy('inhalers'))
-    messages.warning(request,"Inhaler cannot be logged any more.")
+    #messages.warning(request,"Inhaler cannot be logged any more.")
     return redirect("inhalers")
 
 
