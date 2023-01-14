@@ -16,6 +16,11 @@ class AppUser(AbstractUser):
 
     # PROTECTs the deletion of a UserProfile if a Location is tried to be deleted
     current_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='current_users', null=True)
+
+    home_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='home_users', null=True)
+    work_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='work_users', null=True)
+    other_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='other_users', null=True)
+
     pollution_limit = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])
 
     # Consent to allowing us to store their medical information.
