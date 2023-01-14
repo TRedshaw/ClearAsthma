@@ -38,11 +38,11 @@ class AppUser(AbstractUser):
     def __str__(self):
         return self.username
 
-    # TODO FIX
-    def set_new_current_location(self):
-        current_location = AppUser.objects.get(pk=id)
-        current_location.current_location_id = 1  # change field
-        current_location.save()  # this will update only
+    def set_new_current_borough(current_user, borough_id):
+        app_user = AppUser.objects.get(pk=current_user.id)
+        borough = Boroughs.objects.get(id=borough_id)
+        app_user.current_borough_id = borough.id
+        app_user.save()
 
     def quick_set_current_location(self):
         # TODO For when they choose just work or other or home it gives them the pollution level by clicking

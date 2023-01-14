@@ -128,8 +128,8 @@ def logInhalerPuff(request, user_inhaler_id):
 
 
 # TODO FIX
-def logCurrentLocation(request, app_user_id):
-    # you should update you model field here
-    AppUser.set_new_current_location(app_user_id)
+def logCurrentLocation(request, borough_id):
+    current_user = request.user
+    AppUser.set_new_current_borough(current_user, borough_id)
     return redirect(reverse_lazy('pollution'))
 
