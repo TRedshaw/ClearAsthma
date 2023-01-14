@@ -66,7 +66,6 @@
                     map.addSource('maine', {
                         'type': 'geojson',
                         'data': 'london_boroughs.json'
-
                     });
 
                     // Add a new layer to visualize the polygon.
@@ -76,7 +75,6 @@
                         'source': 'maine', // reference the data source
                         'layout': {},
                         'paint': {
-                        'fill-color': ['get', 'feature.properties.fillColor'], // blue color fill
                         'fill-opacity': 0.5
                     }
                     });
@@ -95,44 +93,3 @@
         </script>
     <body>
 {% endblock content %}
-
-
-
-
-
-
-{#{% block content %}#}
-{#    <head>#}
-{#        <title>Interactive maps for Django web apps</title>#}
-{#        <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>#}
-{#        <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />#}
-{#    </head>#}
-{##}
-{#    <div class="container">#}
-{#       <div class="row justify-content-center">#}
-{#            <h1 class="page-title display-4" >POLLUTION</h1>#}
-{##}
-{##}
-{#           TODO FIX#}
-{#           <form enctype="multipart/form-data" method="post" action="/clear/pollution/set_current_location/1">#}
-{#                {% csrf_token %}#}
-{#                <button type="submit" class="btn btn-primary">Log Location</button>#}
-{#           </form>#}
-{##}
-{##}
-{##}
-{##}
-{#       </div>#}
-{#    </div>#}
-{##}
-{#    <body>#}
-{##}
-{#        <div class="container">#}
-{#            <h1>Map of London</h1>#}
-{#            <div id='map' width="100%" style='height:600px'>#}
-{#        </div>#}
-{##}
-{##}
-
-{#    <body>#}
-{#{% endblock content %}#}
