@@ -15,18 +15,13 @@
 
 
           <div class="row">
-              {% if messages %}
-        {% for message in messages %}
-		<div class="alert alert- {{ message.tags }} col-12">{{message}}</div>
-		{% endfor %}
-		{% endif %}
 
             <div class="col-xs-12 col-sm-6">
               <h2 class="display-4" >Inhalers</h2>
 
 
             {% for UserInhaler in object_list %}
-            {{UserInhaler.get_puffs_today}}
+
 
                 <div class="card mb-4">
                     <div class="card-header">
@@ -61,12 +56,14 @@
                         </div>
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
-                                {% widthratio UserInhaler.puffs 1 UserInhaler.frequency %}
                                 {%  if UserInhaler.puffs_today > 5 %}
                                     <li class="list-group-item">You have exceeded your daily dosage.</li>
                                 {% endif %}
-                                {%  if UserInhaler.puffs_remaining < 5 %}
+                                {%  if UserInhaler.puffs_remaining < 5 and UserInhaler.puffs_remaining > 0 %}
                                     <li class="list-group-item">Your inhaler is running low.</li>
+                                {% endif %}
+                                {%  if UserInhaler.puffs_remaining == 0 %}
+                                    <li class="list-group-item">Your inhaler has run out.</li>
                                 {% endif %}
                             </ul>
                         </div>
