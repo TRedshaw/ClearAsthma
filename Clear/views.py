@@ -114,7 +114,7 @@ def add_inhaler(request):
 
 def delete_inhaler(request, *args, **kwargs):
     id = kwargs.get('id')
-    obj = get_object_or_404(UserInhaler, id=id)
+    obj = get_object_or_404(UserInhaler, id = id)
     obj.delete()
     messages.warning(request, "Inhaler has been deleted successfully.")
     return redirect("settings")
