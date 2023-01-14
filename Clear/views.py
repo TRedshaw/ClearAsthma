@@ -31,14 +31,12 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('login')
 
 
-# TODO @Libby -  Finish the code for this view section - need to change the tempalte view
 class UserInhalerView(ListView):
     def get_queryset(self):
-        qs = UserInhaler.objects.filter(user_id=self.request.user)
+        qs = UserInhaler.objects.filter(user_id=self.request.user.id)
         return qs
     model = UserInhaler
     template_name = 'clear/main/inhaler.html'
-
 
 
 
@@ -120,12 +118,13 @@ def delete_inhaler(request, *args, **kwargs):
     messages.warning(request, "Inhaler has been deleted successfully.")
     return redirect("settings")
 
+
 def logInhalerPuff(request, user_inhaler_id):
-    # you should update you model field here
     if UserInhaler.log_puff(user_inhaler_id) is not None:
         return redirect(reverse_lazy('inhalers'))
     messages.warning(request,"Inhaler cannot be logged any more.")
     return redirect("inhalers")
+
 
 # TODO FIX
 def logCurrentLocation(request, app_user_id):
