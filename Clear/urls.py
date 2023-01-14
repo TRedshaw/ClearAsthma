@@ -31,7 +31,7 @@ urlpatterns = [
     path('pollution/', views.PollutionView.as_view(), name='pollution'),
 
     # TODO FIX
-    path('pollution/set_current_location/<int:app_user_id>', views.logCurrentLocation, name='pollution_log_location'),
+    path('pollution/set_current_location/<int:borough_id>', views.logCurrentLocation, name='pollution_log_location'),
     path('settings/', views.SettingsView.as_view(), name='settings'),
     path('add_inhaler/', views.add_inhaler, name='add_inhaler'),
     path('delete_inhaler/<int:id>/',views.delete_inhaler,name="delete_inhaler")
