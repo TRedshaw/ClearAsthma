@@ -120,22 +120,14 @@ class Inhalers(models.Model):
     """
     Contains all inhaler types / their names and has associated ID's.
     """
-    inhaler_type = [
-        ('Beclametasone_dipropionate', 'Beclametasone_dipropionate'),
-        ('Ciclesonide', 'Ciclesonide'),
-        ('Fluticasone_poprionate', 'Fluticasone_poprionate'),
-        ('Beclometasone', 'Beclometasone'),
-        ('Budesonide', 'Budesonide'),
-        ('Fluticasone_poprionate', 'Fluticasone_poprionate'),
-        ('Mometasone', 'Mometasone'),
-        ('Beclometasone_dipropionate_with_ormoterol', 'Beclometasone_dipropionate_with_ormoterol'),
-        ('Budesonid_with_formoterol', 'Budesonid_with_formoterol'),
-        ('Fluticasone_poprionate_with_formoterol', 'Fluticasone_poprionate_with_formoterol'),
-        ('Fluticasone_poprionate_with_salmeterol', 'Fluticasone_poprionate_with_salmeterol'),
-        ('Fluticasone_furoate_with_vilanterol', 'Fluticasone_furoate_with_vilanterol'),
-    ]
 
     name = models.CharField(max_length=64)
+
+    class Meta:
+        verbose_name = 'Inhaler'
+        verbose_name_plural = 'Inhalers'
+        ordering = ['name']
+
 
 class PollutionLevelInfo(models.Model):
     """
