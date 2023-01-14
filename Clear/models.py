@@ -3,7 +3,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import datetime
-
+import requests
+import xml.etree.ElementTree as ET
+import json
+import geopandas as gpd
+import random
 
 class AppUser(AbstractUser):
     """
@@ -177,8 +181,54 @@ class PollutionLevels(models.Model):
         return return_string
 
     def update_pollution_levels(self):
-        # TODO Complete - when the table updates, will need to set all flags to false, and import all new, current,
-        #  pollution levels to true
+        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
+        UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
+                
+        url = ''
+        url += 'https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/GroupName='
+        location ='kensingtonandchelsea'
+        url += location
+        response = requests.get(url)
+        root = ET.fromstring(response.content)
+                
+        total=0
+        number=0
+        properties_dict = {}
+        pollutiontypes={}
+        objects=[]
+
+        for child in root.iter('*'):
+            if child.tag == 'Species':
+                pollutiontypes[child.attrib['SpeciesCode']]=child.attrib['AirQualityIndex']
+                total += int(child.attrib['AirQualityIndex'])
+                number += 1
+        obj=PollutionLevels()
+        for key in pollutiontypes:
+            obj.speciesname = pollutiontypes[key]
+        obj.pollution_level = total/number
+        obj.current_flag = NOT NULL
+        objects.append(obj)
+        PollutionLevels.bulk_create(objects)
+
+
+        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
+        UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
+                # Read current geojson file into a GeoDataFrame from gpd
+        postcodes = gpd.read_file(CURRENT_GEOJSON_FILE)
+                # Add a new columns for features like color or pollution level
+        postcodes.insert(loc=1,column='overall_pollution_level',value=0)
+        postcodes.insert(loc=2,column='fill',value=0)
+
+                # Fill those newly created columns
+        for i in range(len(postcodes.index)):
+            if postcodes.name[i] == "Kensington and Chelsea":
+                postcodes.overall_pollution_level[i]= overall_pollution_level
+                postcodes.fill[i] = "#%06x" % random.randint(0, 0xFFFFFF)
+            else:
+                postcodes.overall_pollution_level[i]= 0
+                postcodes.fill[i] = "000000"
+        # Write back updated GeoDataFrame to geojson file
+        postcodes.to_file(UPDATED_GEOJSON_FILE, driver="GeoJSON")
         pass
 
 class Boroughs(models.Model):
