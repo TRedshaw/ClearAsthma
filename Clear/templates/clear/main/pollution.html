@@ -14,7 +14,7 @@
     <body>
         <div class="container">
            <div class="row justify-content-center">
-               <h1>POLLUTION </h1>
+               <h1 class="display-4">POLLUTION </h1>
            </div>
         </div>
 
@@ -37,8 +37,9 @@
                         </button>
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Hammersmith & Fulham</a>
-                            <a class="dropdown-item" href="#">Kensington & Chelsea</a>
+                            {% for borough in borough_choices %}
+                                <a class="dropdown-item" href="#">{{ borough.OutwardName }}</a>
+                            {% endfor %}
                         </div>
                     </div>
     {#           TODO FIX#}
