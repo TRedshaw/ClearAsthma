@@ -202,37 +202,7 @@ class Inhalers(models.Model):
         ('Fluticasone_furoate_with_vilanterol', 'Fluticasone_furoate_with_vilanterol'),
     ]
 
-    remaing_puff_choice = (
-        ('10', '10'),
-        ('20', '20'),
-        ('30', '30'),
-        ('40', '40'),
-        ('50', '50'),
-        ('60', '60'),
-        ('70', '70'),
-        ('80', '80'),
-        ('90', '90'),
-        ('100','100'),
-    )
-    puffs_per_Day = (
-        ('1', '1'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-        ('5', '5'),
-        ('6', '6'),
-        ('7', '7'),
-        ('8', '8'),
-        ('9', '9'),
-        ('10','10'),
-    )
-
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='inhaler_user', null=False)
-    inhaler_type = models.CharField(max_length=200, choices=inhaler_type)
-    puffs_remaining = models.CharField(max_length=20, choices=remaing_puff_choice)
-    puffs = models.CharField(max_length=200, choices=puffs_per_Day)
-    per_Day = models.CharField(max_length=20, choices=puffs_per_Day)
+    name = models.CharField(max_length=64)
 
 class PollutionLevelInfo(models.Model):
     """
