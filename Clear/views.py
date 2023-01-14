@@ -122,7 +122,7 @@ def delete_inhaler(request, *args, **kwargs):
 def logInhalerPuff(request, user_inhaler_id):
     if UserInhaler.log_puff(user_inhaler_id) is not None:
         return redirect(reverse_lazy('inhalers'))
-    messages.warning(request,"Inhaler cannot be logged any more.")
+    #messages.warning(request,"Inhaler cannot be logged any more.")
     return redirect("inhalers")
 
 
