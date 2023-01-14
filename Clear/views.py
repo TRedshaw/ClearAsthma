@@ -95,14 +95,51 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             return redirect('settings')
 
 
+def getIDfromInhalerType(inhaler_type):
+    inhaler_name = ""
+    if (inhaler_type == "Beclametasone_dipropionate"):
+        inhaler_name = "Beclametasone Dipropionate"
+    elif (inhaler_type == "Ciclesonide"):
+        inhaler_name = "Ciclesonide"
+    elif (inhaler_type == "Fluticasone_poprionate"):
+        inhaler_name = "Fluticasone Poprionate"
+    elif (inhaler_type == "Beclometasone"):
+        inhaler_name = "Beclometasone"
+    elif (inhaler_type == "Budesonide"):
+        inhaler_name = "Budesonide"
+    elif (inhaler_type == "Fluticasone_poprionate"):
+        inhaler_name = "Fluticasone Poprionate"
+    elif (inhaler_type == "Mometasone"):
+        inhaler_name = "Mometasone"
+    elif (inhaler_type == "Beclometasone_dipropionate_with_ormoterol"):
+        inhaler_name = "Beclometasone Dipropionate with Ormoterol"
+    elif (inhaler_type == "Budesonide_with_formoterol"):
+        inhaler_name = "Budesonide with Formoterol"
+    elif (inhaler_type == "Fluticasone_poprionate_with_formoterol"):
+        inhaler_name = "Fluticasone Poprionate with Formoterol"
+    elif (inhaler_type == "Fluticasone_poprionate_with_salmeterol"):
+        inhaler_name = "Fluticasone Poprionate with Salmeterol"
+    elif (inhaler_type == "Fluticasone_poprionate_with_vilanterol"):
+        inhaler_name = "Fluticasone Furoate with Vilanterol"
+
+    inhaler_ids = Inhalers.objects.filter(name=inhaler_name)
+    for id in inhaler_ids:
+        print(id)
+    inhaler_id = str(inhaler_ids[0].id)
+    return inhaler_id
 def add_inhaler(request):
-    user = request.user
-    inhaler_id = request.POST.get('inhaler_id')
+    print(add_inhaler)
+    user_id = request.user.id
+    inhaler_type = request.POST.get('inhaler_type')
+    inhaler_id = getIDfromInhalerType(inhaler_type)
+    print(inhaler_id)
+
     puff_remaining = request.POST.get('Puffs_Remaining')
     per_day = request.POST.get('Per_Day')
+
     if inhaler_id and puff_remaining and per_day:
         obj = UserInhaler.objects.create(
-            user_id=user,
+            user_id=user_id,
             inhaler_id=inhaler_id,
             puffs_remaining=puff_remaining,
             puffs_per_day=per_day,
@@ -113,8 +150,6 @@ def add_inhaler(request):
 
     messages.error(request, 'Please fill in all required fields')
     return redirect('settings')
-
-
 def delete_inhaler(request, *args, **kwargs):
     id = kwargs.get('id')
     obj = get_object_or_404(UserInhaler, id=id)
