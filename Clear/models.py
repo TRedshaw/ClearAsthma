@@ -15,7 +15,7 @@ class AppUser(AbstractUser):
     dob = models.DateField(default=datetime.date.today)
 
     # PROTECTs the deletion of a UserProfile if a Location is tried to be deleted
-    current_location = models.ForeignKey('Location', on_delete=models.PROTECT, related_name='current_users', null=True)
+    current_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='current_users', null=True)
     pollution_limit = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])
 
     # Consent to allowing us to store their medical information.
