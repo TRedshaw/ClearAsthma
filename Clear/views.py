@@ -128,3 +128,4 @@ def logCurrentLocation(request, app_user_id):
     # you should update you model field here
     AppUser.set_new_current_location(app_user_id)
     return redirect(reverse_lazy('pollution'))
+
