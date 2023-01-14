@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import UpdateView, CreateView
 from Clear.forms import RegisterForm, SettingsForm
-from Clear.models import AppUser, UserInhaler, Inhalers, Boroughs
+from Clear.models import AppUser, UserInhaler, Inhalers, Boroughs, PollutionLevels
 from django.shortcuts import get_object_or_404
 # from django.views import View
 from django.views.generic import View
@@ -44,6 +44,12 @@ class PollutionView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['borough_choices'] = Boroughs.objects.all()
         return context
+
+    def update_all_pollution_levels(self):
+        context=self.get_context_data()
+        for borough in context['borough_choices']:
+            PollutionLevels.update_pollution_levels(borough)
+        pass
 
 # TODO @Anna -  Finish the code for this view section - need to change the tempalte view
 class SettingsView(LoginRequiredMixin, UpdateView):
