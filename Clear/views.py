@@ -14,12 +14,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
-
-
-
-
 from ClearWeb.settings import AUTH_USER_MODEL
-
 
 
 # Create your views here.
@@ -31,28 +26,29 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('login')
 
 
-class UserInhalerView(ListView):
+class UserInhalerView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         qs = UserInhaler.objects.filter(user_id=self.request.user.id)
         return qs
     model = UserInhaler
     template_name = 'clear/main/inhaler.html'
+    login_url = '/clear/login/'
 
 
-
-# TODO @Cassy + Kareena - Finish the code for this view section - need to change the tempalte view
-class PollutionView(TemplateView):
-    model = AUTH_USER_MODEL
+# TODO @Cassy + Kareena - Finish the code for this view sectio n- need to change the tempalte view
+class PollutionView(LoginRequiredMixin, TemplateView):
     template_name = 'clear/main/pollution.html'
+    login_url = '/clear/login/'
 
 
 # TODO @Anna -  Finish the code for this view section - need to change the tempalte view
 class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'clear/main/settings.html'
     user_form = SettingsForm
+    login_url = '/clear/login/'
     def get(self, request):
         user = get_object_or_404(AppUser, id = request.user.id)
-        inhalers = Inhalers.objects.filter(user_id = request.user.id)
+        inhalers = Inhalers.objects.filter(user = request.user)
         user_form = self.user_form(instance = user)
         return render(request, self.template_name, context= {"form":user_form,"inhalers":inhalers})
 
@@ -114,7 +110,7 @@ def add_inhaler(request):
 
 def delete_inhaler(request, *args, **kwargs):
     id = kwargs.get('id')
-    obj = get_object_or_404(UserInhaler, id = id)
+    obj = get_object_or_404(UserInhaler, id=id)
     obj.delete()
     messages.warning(request, "Inhaler has been deleted successfully.")
     return redirect("settings")
@@ -132,4 +128,3 @@ def logCurrentLocation(request, app_user_id):
     # you should update you model field here
     AppUser.set_new_current_location(app_user_id)
     return redirect(reverse_lazy('pollution'))
-
