@@ -46,6 +46,35 @@
 {#                        {% csrf_token %}#}
 {#                        <button type="submit" class="btn btn-primary">Log Location</button>#}
 {#                   </form>#}
+                               <div class="col-xs-12 col-sm-5 offset-md-1">
+              <h2 class="display-4" >Alerts</h2>
+                {% for User in object_list %}
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Location: {{User.work_borough_id}}
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                {%  if UserInhaler.puffs_today > UserInhaler.puffs_per_day %}
+                                    <li class="list-group-item">You have exceeded your daily dosage.</li>
+                                {% endif %}
+                                {%  if UserInhaler.puffs_remaining < 5 and UserInhaler.puffs_remaining > 0 %}
+                                    <li class="list-group-item">Your inhaler is running low.</li>
+                                {% endif %}
+                                {%  if UserInhaler.puffs_remaining == 0 %}
+                                    <li class="list-group-item">Your inhaler has run out.</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+
+          </div>
+
+        </div>
                 </div>
             </div>
         </div>
