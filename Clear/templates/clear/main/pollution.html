@@ -31,6 +31,7 @@
                     <div class="row justify-content-center">
                         <h2 class="display-4" >Warnings</h2>
                     </div>
+
                     <div class="dropdown">
                         <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                         Current Location
@@ -42,16 +43,17 @@
                             {% endfor %}
                         </div>
                     </div>
-    {#           TODO FIX#}
-{#                   <form enctype="multipart/form-data" method="post" action="/clear/pollution/set_current_location/1">#}
-{#                        {% csrf_token %}#}
-{#                        <button type="submit" class="btn btn-primary">Log Location</button>#}
-{#                   </form>#}
                 </div>
             </div>
         </div>
 
         <script>
+            {#dictionary={};#}
+            {#var gpd = require('geopandas');#}
+            {#boroughs= gpd.read_file(UPDATED_GEOJSON_FILE);#}
+            {#for (i in range(len(boroughs.index))) {#}
+            {#    dictionary{borughs.name[i]}={boroughs.fill[i]};#}
+            {#}#}
             mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw';
                 var map = new mapboxgl.Map({
                     container: 'map',
@@ -64,7 +66,8 @@
                     // Add a data source containing GeoJSON data.
                     map.addSource('maine', {
                         'type': 'geojson',
-                        'data': 'http://skgrange.github.io/www/data/london_boroughs.json'
+                        'data': 'london_boroughs (002).txt'
+{#                        'data': 'http://skgrange.github.io/www/data/london_boroughs.json'#}
                     });
 
                     // Add a new layer to visualize the polygon.
@@ -73,9 +76,9 @@
                         'type': 'fill',
                         'source': 'maine', // reference the data source
                         'layout': {},
-                        'paint': {
-                        'fill-color': '#0080ff', // blue color fill
-                        'fill-opacity': 0.5
+                        'paint': { // blue color fill
+                            'fill': ['get', 'fillColor']
+                            'fill-opacity': 0.5
                     }
                     });
                     // Add a black outline around the polygon.
