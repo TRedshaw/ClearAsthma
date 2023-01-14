@@ -27,6 +27,7 @@ class RegisterView(CreateView):
 
 
 class UserInhalerView(LoginRequiredMixin, ListView):
+    # Get the
     def get_queryset(self):
         qs = UserInhaler.objects.filter(user_id=self.request.user.id)
         return qs
