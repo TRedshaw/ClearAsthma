@@ -158,6 +158,7 @@ class UserInhaler(models.Model):
     def __str__(self):
         return_string = str(self.user_id) + " with " + str(self.inhaler_type)
         return return_string
+
     def get_readable_type(self):
         return self.inhaler_type.replace('_', ' ')
 
