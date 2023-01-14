@@ -204,7 +204,7 @@ class Inhalers(models.Model):
         ('Fluticasone_furoate_with_vilanterol', 'Fluticasone_furoate_with_vilanterol'),
     ]
 
-    remaing_puff_choice = (
+    remaining_puff_choice = (
         ('10', '10'),
         ('20', '20'),
         ('30', '30'),
@@ -232,7 +232,7 @@ class Inhalers(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='inhaler_user', null=False)
     inhaler_type = models.CharField(max_length=200, choices=inhaler_type)
-    puffs_remaining = models.CharField(max_length=20, choices=remaing_puff_choice)
+    puffs_remaining = models.CharField(max_length=20, choices=remaining_puff_choice)
     puffs = models.CharField(max_length=200, choices=puffs_per_Day)
     per_Day = models.CharField(max_length=20, choices=puffs_per_Day)
 

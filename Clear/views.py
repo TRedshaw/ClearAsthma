@@ -61,7 +61,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
         user = get_object_or_404(AppUser, id = request.user.id)
         form_class = SettingsForm(request.POST,instance = user)
         if form_class.is_valid():
-            print("")
+            print(request.POST)
             form_class.save()
             inhaler_id = request.POST.getlist('inhaler_id')
             inhaler_type = request.POST.getlist('inhaler_type')
