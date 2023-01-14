@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import UpdateView, CreateView
 from Clear.forms import RegisterForm, SettingsForm
-from Clear.models import AppUser, UserInhaler, Inhalers
+from Clear.models import AppUser, UserInhaler, Inhalers, Boroughs
 from django.shortcuts import get_object_or_404
 # from django.views import View
 from django.views.generic import View
@@ -35,11 +35,15 @@ class UserInhalerView(LoginRequiredMixin, ListView):
     login_url = '/clear/login/'
 
 
-# TODO @Cassy + Kareena - Finish the code for this view sectio n- need to change the tempalte view
+# TODO Add context data here
 class PollutionView(LoginRequiredMixin, TemplateView):
     template_name = 'clear/main/pollution.html'
     login_url = '/clear/login/'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['borough_choices'] = Boroughs.objects.all()
+        return context
 
 # TODO @Anna -  Finish the code for this view section - need to change the tempalte view
 class SettingsView(LoginRequiredMixin, UpdateView):
@@ -128,3 +132,4 @@ def logCurrentLocation(request, app_user_id):
     # you should update you model field here
     AppUser.set_new_current_location(app_user_id)
     return redirect(reverse_lazy('pollution'))
+

@@ -14,7 +14,7 @@
     <body>
         <div class="container">
            <div class="row justify-content-center">
-               <h1>POLLUTION </h1>
+               <h1 class="display-4">POLLUTION </h1>
            </div>
         </div>
 
@@ -31,55 +31,29 @@
                     <div class="row justify-content-center">
                         <h2 class="display-4" >Warnings</h2>
                     </div>
+
                     <div class="dropdown">
                         <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                         Current Location
                         </button>
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Hammersmith & Fulham</a>
-                            <a class="dropdown-item" href="#">Kensington & Chelsea</a>
+                            {% for borough in borough_choices %}
+                                <a class="dropdown-item" href="#">{{ borough.OutwardName }}</a>
+                            {% endfor %}
                         </div>
                     </div>
-    {#           TODO FIX#}
-{#                   <form enctype="multipart/form-data" method="post" action="/clear/pollution/set_current_location/1">#}
-{#                        {% csrf_token %}#}
-{#                        <button type="submit" class="btn btn-primary">Log Location</button>#}
-{#                   </form>#}
-                               <div class="col-xs-12 col-sm-5 offset-md-1">
-              <h2 class="display-4" >Alerts</h2>
-                {% for User in object_list %}
-
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            Location: {{User.work_borough_id}}
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                {%  if UserInhaler.puffs_today > UserInhaler.puffs_per_day %}
-                                    <li class="list-group-item">You have exceeded your daily dosage.</li>
-                                {% endif %}
-                                {%  if UserInhaler.puffs_remaining < 5 and UserInhaler.puffs_remaining > 0 %}
-                                    <li class="list-group-item">Your inhaler is running low.</li>
-                                {% endif %}
-                                {%  if UserInhaler.puffs_remaining == 0 %}
-                                    <li class="list-group-item">Your inhaler has run out.</li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-
-                {% endfor %}
-            </div>
-
-          </div>
-
-        </div>
                 </div>
             </div>
         </div>
 
         <script>
+            {#dictionary={};#}
+            {#var gpd = require('geopandas');#}
+            {#boroughs= gpd.read_file(UPDATED_GEOJSON_FILE);#}
+            {#for (i in range(len(boroughs.index))) {#}
+            {#    dictionary{borughs.name[i]}={boroughs.fill[i]};#}
+            {#}#}
             mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw';
                 var map = new mapboxgl.Map({
                     container: 'map',
@@ -92,7 +66,8 @@
                     // Add a data source containing GeoJSON data.
                     map.addSource('maine', {
                         'type': 'geojson',
-                        'data': 'http://skgrange.github.io/www/data/london_boroughs.json'
+                        'data': 'london_boroughs (002).txt'
+{#                        'data': 'http://skgrange.github.io/www/data/london_boroughs.json'#}
                     });
 
                     // Add a new layer to visualize the polygon.
@@ -101,9 +76,9 @@
                         'type': 'fill',
                         'source': 'maine', // reference the data source
                         'layout': {},
-                        'paint': {
-                        'fill-color': '#0080ff', // blue color fill
-                        'fill-opacity': 0.5
+                        'paint': { // blue color fill
+                            'fill': ['get', 'fillColor']
+                            'fill-opacity': 0.5
                     }
                     });
                     // Add a black outline around the polygon.
