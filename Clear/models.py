@@ -9,6 +9,7 @@ import json
 import geopandas as gpd
 import random
 
+
 class AppUser(AbstractUser):
     """
     This model creates the table to store all records of users. It extends the Django AbstractUser default user table
@@ -244,6 +245,7 @@ class PollutionLevels(models.Model):
         # Write back updated GeoDataFrame to geojson file
         boroughs.to_file(UPDATED_GEOJSON_FILE, driver="GeoJSON")
         pass
+
 
 class Boroughs(models.Model):
     code = models.IntegerField()
