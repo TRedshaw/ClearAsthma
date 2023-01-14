@@ -23,6 +23,7 @@ class Migration(migrations.Migration):
             name='Boroughs',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('code', models.IntegerField()),
                 ('OutwardName', models.CharField(max_length=128)),
                 ('ApiName', models.CharField(max_length=128)),
             ],

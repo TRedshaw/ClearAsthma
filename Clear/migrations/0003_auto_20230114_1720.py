@@ -22,7 +22,7 @@ def InsertInhalers(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Clear', '0001_initial'),
+        ('Clear', '0002_auto_20230114_1641'),
     ]
 
     operations = [
