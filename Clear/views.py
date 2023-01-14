@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import UpdateView, CreateView
 from Clear.forms import RegisterForm, SettingsForm
-from Clear.models import AppUser, UserInhaler ,Inhaler, Inhalers
+from Clear.models import AppUser, UserInhaler, Inhalers
 from django.shortcuts import get_object_or_404
 # from django.views import View
 from django.views.generic import View
@@ -14,12 +14,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
-
-
-
-
 from ClearWeb.settings import AUTH_USER_MODEL
-
 
 
 # Create your views here.
@@ -31,26 +26,26 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('login')
 
 
-# TODO @Libby -  Finish the code for this view section - need to change the tempalte view
-class UserInhalerView(ListView):
+class UserInhalerView(LoginRequiredMixin, ListView):
     def get_queryset(self):
-        qs = UserInhaler.objects.filter(user_id=self.request.user)
+        qs = UserInhaler.objects.filter(user_id=self.request.user.id)
         return qs
     model = UserInhaler
     template_name = 'clear/main/inhaler.html'
-
-
+    login_url = '/clear/login/'
 
 
 # TODO @Cassy + Kareena - Finish the code for this view sectio n- need to change the tempalte view
-class PollutionView(TemplateView):
+class PollutionView(LoginRequiredMixin, TemplateView):
     template_name = 'clear/main/pollution.html'
+    login_url = '/clear/login/'
 
 
 # TODO @Anna -  Finish the code for this view section - need to change the tempalte view
 class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'clear/main/settings.html'
     user_form = SettingsForm
+    login_url = '/clear/login/'
     def get(self, request):
         user = get_object_or_404(AppUser, id = request.user.id)
         inhalers = Inhalers.objects.filter(user = request.user)
@@ -120,12 +115,13 @@ def delete_inhaler(request, *args, **kwargs):
     messages.warning(request, "Inhaler has been deleted successfully.")
     return redirect("settings")
 
+
 def logInhalerPuff(request, user_inhaler_id):
-    # you should update you model field here
     if UserInhaler.log_puff(user_inhaler_id) is not None:
         return redirect(reverse_lazy('inhalers'))
-    messages.warning(request,"Inhaler cannot be logged any more.")
+    #messages.warning(request,"Inhaler cannot be logged any more.")
     return redirect("inhalers")
+
 
 # TODO FIX
 def logCurrentLocation(request, app_user_id):
