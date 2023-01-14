@@ -93,7 +93,7 @@ class Location(models.Model):
     location name with ID.
     """
     postcode = models.CharField(max_length=12)
-    name = models.CharField(max_length=128)
+    borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='locations_borough', null=True)
 
     class Meta:
         verbose_name = 'Location'
