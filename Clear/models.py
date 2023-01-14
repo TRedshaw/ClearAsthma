@@ -209,7 +209,7 @@ class PollutionLevels(models.Model):
     pollution_date = models.DateField(default=datetime.date.today)
 
     # The current flag will indicate the record that has the current pollution level for a specific region
-    # (True = Current, False (0) = Previous). This allows us to build a history of pollution levels
+    # (True = Current, False (0) = Previous). This allows us to build a history of pollution levels.
     current_flag = models.BooleanField(default=True)
 
     class Meta:
