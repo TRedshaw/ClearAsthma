@@ -8,13 +8,13 @@ import datetime
 class AppUser(AbstractUser):
     """
     This model creates the table to store all records of users. It extends the Django AbstractUser default user table
-    as we have custom fields. It contains method relating to updating the table such as updating current location.
+    as we have custom fields. It contains method relating to updating the table such as updating current borough.
     """
     # CASCADE ensures that if a user is deleted, it deletes all things related to it
     # dob in form YYYY-MM-DD
     dob = models.DateField(default=datetime.date.today)
 
-    # PROTECTs the deletion of a UserProfile if a Location is tried to be deleted
+    # PROTECTs the deletion of a UserProfile if a Borough is tried to be deleted
     current_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='current_users', null=True)
 
     home_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='home_users', null=True)
@@ -57,54 +57,6 @@ class AppUser(AbstractUser):
         # TODO Create code to add a location
         pass
 
-    # TODO Add methods for editing username etc -- but wait to check if django has built in things for that
-    #  so we dont need to add every function ourself
-
-# TODO Maybe remove as we dont need
-class UserLocations(models.Model):
-    """
-    Model which contains relationships between users and locations for location types other than current. Table produced
-    so that the user can have many other common locations.
-    """
-
-    # The first element in each tuple is the value that will be stored in the database.
-    # The second element is displayed by the field’s form widget.
-
-    LOCATION_TYPES = [
-        ('home', 'Home'),
-        ('work', 'Work'),
-        ('other', 'Other')
-    ]
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='locations_user', null=False)
-    location = models.ForeignKey('Location', on_delete=models.PROTECT, related_name='users_location', null=True)
-    location_type = models.CharField(max_length=5, choices=LOCATION_TYPES)
-
-    class Meta:
-        verbose_name = 'User Location'
-        verbose_name_plural = 'User Locations'
-        ordering = ['id']
-
-    def __str__(self):
-        return_string = str(self.user_id) + "@" + str(self.location_type)
-        return return_string
-
-
-class Location(models.Model):
-    """
-    A model which contains all location names and their related postcodes. Will be used to associate
-    location name with ID.
-    """
-    postcode = models.CharField(max_length=12)
-    borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='locations_borough', null=True)
-
-    class Meta:
-        verbose_name = 'Location'
-        verbose_name_plural = 'Locations'
-        ordering = ['postcode']
-
-    def __str__(self):
-        return self.name
 
 class UserInhaler(models.Model):
     """
@@ -206,10 +158,10 @@ class PollutionLevelInfo(models.Model):
 
 class PollutionLevels(models.Model):
     """
-    All locations' pollution levels are stored here, with each location being related by a foreign key.
+    All boroughs' pollution levels are stored here, with each borough being related by a foreign key.
     """
     # TODO will need to edit at a later date to accomodate for different pollutants
-    location = models.ForeignKey('Location', on_delete=models.CASCADE, related_name='location_pollution', null=False)
+    borough = models.ForeignKey('Boroughs', on_delete=models.CASCADE, related_name='borough_pollution', null=False)
     pollution_level = models.IntegerField(help_text="Overall Pollution Level")
     pollution_level_no2 = models.IntegerField(help_text="NO2 Pollution Level")
     pollution_level_o3 = models.IntegerField(help_text="O3 Pollution Level")
@@ -226,10 +178,10 @@ class PollutionLevels(models.Model):
     class Meta:
         verbose_name = 'Pollution Levels'
         verbose_name_plural = 'Pollution Levels'
-        ordering = ['location_id']
+        ordering = ['borough_id']
 
     def __str__(self):
-        return_string = "Level " + str(self.pollution_level) + "@" + str(self.location_id)
+        return_string = "Level " + str(self.pollution_level) + "@" + str(self.borough_id)
         return return_string
 
     def update_pollution_levels(self):
