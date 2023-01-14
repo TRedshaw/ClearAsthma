@@ -8,17 +8,26 @@ from django.http import request
 
 
 class AppUser(AbstractUser):
+    """
+    This model creates the table to store all records of users. It extends the Django AbstractUser default user table
+    as we have custom fields. It contains method relating to updating the table such as updating current location.
+    """
     # CASCADE ensures that if a user is deleted, it deletes all things related to it
     # dob in form YYYY-MM-DD
     dob = models.DateField(default=datetime.date.today)
+
     # PROTECTs the deletion of a UserProfile if a Location is tried to be deleted
     current_location = models.ForeignKey('Location', on_delete=models.PROTECT, related_name='current_users', null=True)
     pollution_limit = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])
+
+    # Consent to allowing us to store their medical information.
     consent = models.BooleanField()
 
+    # Setting required fields so that the register form knows that these need to be filled in order to create a user.
     REQUIRED_FIELDS = ['dob', 'pollution_limit', 'consent']
 
     class Meta:
+        """ Our Metadata classes allow us to set data for the class such as its viewable name. """
         verbose_name = 'App User'
         verbose_name_plural = 'App Users'
         ordering = ['id']
@@ -48,7 +57,7 @@ class AppUser(AbstractUser):
     # TODO Add methods for editing username etc -- but wait to check if django has built in things for that
     #  so we dont need to add every function ourself
 
-
+# TODO Maybe remove as we dont need
 class UserLocations(models.Model):
     """
     Model which contains relationships between users and locations for location types other than current. Table produced
@@ -121,6 +130,11 @@ class Inhaler(models.Model):
 
 
 class UserInhaler(models.Model):
+    """
+    This model contains all records relating a user to an inhaler. This is to normalise the database such that we can
+    relate user_id to inhaler_id, and store each instances number of puffs per day etc. It contains methods to reset
+    the daily puff count each day, as well as increment puffs today and decrease puffs remaining.
+    """
     # Adding inhaler type to the inhaler page so user can know which inhaler they are tracking
     inhaler_type = [
         ('Beclametasone_dipropionate', 'Beclametasone dipropionate'),
@@ -136,6 +150,7 @@ class UserInhaler(models.Model):
         ('Fluticasone_poprionate_with_salmeterol', 'Fluticasone_poprionate_with_salmeterol'),
         ('Fluticasone_furoate_with_vilanterol', 'Fluticasone_furoate_with_vilanterol'),
     ]
+
     # models.PROTECT works so if a user tries to delete an 'Inhaler' record (the one in quotations) then it wont let you
     # models.CASCADE will delete all related UserInhalers if a UserProfile (user) is deleted
 
@@ -166,7 +181,7 @@ class UserInhaler(models.Model):
         # TODO Complete
         pass
 
-    # To reset puffs today to zero every day:
+    # To reset puffs today to zero every day
     def get_puffs_today(self):
         today_date = datetime.date.today()
         # today_date = '2023-01-09'
@@ -179,9 +194,11 @@ class UserInhaler(models.Model):
         # TODO Complete
         pass
 
-
+    # To log an inhaler usage.
     def log_puff(user_inhaler_id):
+        # Get the record where the user_inhaler_id matches that of the one on the site
         user_inhaler = UserInhaler.objects.get(pk=user_inhaler_id)
+        # Only allow a puff to be logged if they have puffs remaining
         if user_inhaler.puffs_remaining > 0:
             user_inhaler.puffs_today += 1  # change field
             user_inhaler.puffs_remaining -= 1
@@ -190,6 +207,9 @@ class UserInhaler(models.Model):
             return 1
         return None
 class Inhalers(models.Model):
+    """
+    Contains all inhaler types / their names and has associated ID's.
+    """
     inhaler_type = [
         ('Beclametasone_dipropionate', 'Beclametasone_dipropionate'),
         ('Ciclesonide', 'Ciclesonide'),
@@ -238,6 +258,9 @@ class Inhalers(models.Model):
     per_Day = models.CharField(max_length=20, choices=puffs_per_Day)
 
 class PollutionLevelInfo(models.Model):
+    """
+    A model where pollution level limits and their associated warnings are stored.
+    """
     band = models.CharField(max_length=6)
     lower_bound = models.IntegerField()
     upper_bound = models.IntegerField()
@@ -254,6 +277,9 @@ class PollutionLevelInfo(models.Model):
 
 
 class PollutionLevels(models.Model):
+    """
+    All locations' pollution levels are stored here, with each location being related by a foreign key.
+    """
     # TODO will need to edit at a later date to accomodate for different pollutants
     location_id = models.ForeignKey('Location', on_delete=models.CASCADE, related_name='location_pollution', null=False)
     pollution_level = models.IntegerField()
