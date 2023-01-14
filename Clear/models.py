@@ -149,12 +149,16 @@ class UserInhaler(models.Model):
         user_inhaler = UserInhaler.objects.get(pk=user_inhaler_id)
         # Only allow a puff to be logged if they have puffs remaining
         if user_inhaler.puffs_remaining > 0:
-            user_inhaler.puffs_today += 1  # change field
+            # Increment the puffs today field for the current record
+            user_inhaler.puffs_today += 1
+            # Decrease the puffs remaining field
             user_inhaler.puffs_remaining -= 1
-
-            user_inhaler.save()  # this will update only
+            # Update the table
+            user_inhaler.save()
             return 1
         return None
+
+
 class Inhalers(models.Model):
     """
     Contains all inhaler types / their names and has associated ID's.
