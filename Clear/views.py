@@ -26,23 +26,26 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('login')
 
 
-class UserInhalerView(ListView):
+class UserInhalerView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         qs = UserInhaler.objects.filter(user_id=self.request.user.id)
         return qs
     model = UserInhaler
     template_name = 'clear/main/inhaler.html'
+    login_url = '/clear/login/'
 
 
 # TODO @Cassy + Kareena - Finish the code for this view sectio n- need to change the tempalte view
-class PollutionView(TemplateView):
+class PollutionView(LoginRequiredMixin, TemplateView):
     template_name = 'clear/main/pollution.html'
+    login_url = '/clear/login/'
 
 
 # TODO @Anna -  Finish the code for this view section - need to change the tempalte view
 class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'clear/main/settings.html'
     user_form = SettingsForm
+    login_url = '/clear/login/'
     def get(self, request):
         user = get_object_or_404(AppUser, id = request.user.id)
         inhalers = Inhalers.objects.filter(user = request.user)
