@@ -206,7 +206,7 @@ class PollutionLevels(models.Model):
         for key in pollutiontypes:
             obj.speciesname = pollutiontypes[key]
         obj.pollution_level = total/number
-        obj.current_flag = NOT NULL
+        obj.current_flag = True
         objects.append(obj)
         PollutionLevels.bulk_create(objects)
 
