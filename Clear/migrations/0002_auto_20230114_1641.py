@@ -47,5 +47,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(InsertBoroughs()),
+        migrations.RunPython(InsertBoroughs),
     ]
