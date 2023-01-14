@@ -75,6 +75,12 @@
         </div>
 
         <script>
+            {#dictionary={};#}
+            {#var gpd = require('geopandas');#}
+            {#boroughs= gpd.read_file(UPDATED_GEOJSON_FILE);#}
+            {#for (i in range(len(boroughs.index))) {#}
+            {#    dictionary{borughs.name[i]}={boroughs.fill[i]};#}
+            {#}#}
             mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw';
                 var map = new mapboxgl.Map({
                     container: 'map',
@@ -87,7 +93,8 @@
                     // Add a data source containing GeoJSON data.
                     map.addSource('maine', {
                         'type': 'geojson',
-                        'data': 'http://skgrange.github.io/www/data/london_boroughs.json'
+                        'data': 'london_boroughs (002).txt'
+{#                        'data': 'http://skgrange.github.io/www/data/london_boroughs.json'#}
                     });
 
                     // Add a new layer to visualize the polygon.
@@ -96,9 +103,9 @@
                         'type': 'fill',
                         'source': 'maine', // reference the data source
                         'layout': {},
-                        'paint': {
-                        'fill-color': '#0080ff', // blue color fill
-                        'fill-opacity': 0.5
+                        'paint': { // blue color fill
+                            'fill': ['get', 'fillColor']
+                            'fill-opacity': 0.5
                     }
                     });
                     // Add a black outline around the polygon.
