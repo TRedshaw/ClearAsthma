@@ -4,21 +4,28 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import datetime
 
-from django.http import request
-
 
 class AppUser(AbstractUser):
+    """
+    This model creates the table to store all records of users. It extends the Django AbstractUser default user table
+    as we have custom fields. It contains method relating to updating the table such as updating current location.
+    """
     # CASCADE ensures that if a user is deleted, it deletes all things related to it
     # dob in form YYYY-MM-DD
     dob = models.DateField(default=datetime.date.today)
+
     # PROTECTs the deletion of a UserProfile if a Location is tried to be deleted
-    current_location = models.ForeignKey('Location', on_delete=models.PROTECT, related_name='current_users', null=True)
+    current_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='current_users', null=True)
     pollution_limit = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])
+
+    # Consent to allowing us to store their medical information.
     consent = models.BooleanField()
 
+    # Setting required fields so that the register form knows that these need to be filled in order to create a user.
     REQUIRED_FIELDS = ['dob', 'pollution_limit', 'consent']
 
     class Meta:
+        """ Our Metadata classes allow us to set data for the class such as its viewable name. """
         verbose_name = 'App User'
         verbose_name_plural = 'App Users'
         ordering = ['id']
@@ -48,7 +55,7 @@ class AppUser(AbstractUser):
     # TODO Add methods for editing username etc -- but wait to check if django has built in things for that
     #  so we dont need to add every function ourself
 
-
+# TODO Maybe remove as we dont need
 class UserLocations(models.Model):
     """
     Model which contains relationships between users and locations for location types other than current. Table produced
@@ -84,7 +91,7 @@ class Location(models.Model):
     location name with ID.
     """
     postcode = models.CharField(max_length=12)
-    name = models.CharField(max_length=128)
+    borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='locations_borough', null=True)
 
     class Meta:
         verbose_name = 'Location'
@@ -94,62 +101,23 @@ class Location(models.Model):
     def __str__(self):
         return self.name
 
-
-class Inhaler(models.Model):
-    name = models.CharField(max_length=12)
-
-    # TODO consider normalising this table into 3 separate (dosage, strength, inhaler) to relate better
-    low_dose = models.IntegerField()  # 100 micrograms
-    low_puffs = models.IntegerField()  # 2 puffs
-    low_frequency = models.IntegerField()  # twice a day
-
-    med_dose = models.IntegerField()
-    med_puffs = models.IntegerField()
-    med_frequency = models.IntegerField()
-
-    hi_dose = models.IntegerField()
-    hi_puffs = models.IntegerField()
-    hi_frequency = models.IntegerField()
-
-    class Meta:
-        verbose_name = 'Inhaler'
-        verbose_name_plural = 'Inhalers'
-        ordering = ['id']
-
-    def __str__(self):
-        return self.name
-
-
 class UserInhaler(models.Model):
-    # Adding inhaler type to the inhaler page so user can know which inhaler they are tracking
-    inhaler_type = [
-        ('Beclametasone_dipropionate', 'Beclametasone dipropionate'),
-        ('Ciclesonide', 'Ciclesonide'),
-        ('Fluticasone_poprionate', 'Fluticasone poprionate'),
-        ('Beclometasone', 'Beclometasone'),
-        ('Budesonide', 'Budesonide'),
-        ('Fluticasone_poprionate', 'Fluticasone_poprionate'),
-        ('Mometasone', 'Mometasone'),
-        ('Beclometasone_dipropionate_with_ormoterol', 'Beclometasone_dipropionate_with_ormoterol'),
-        ('Budesonid_with_formoterol', 'Budesonid_with_formoterol'),
-        ('Fluticasone_poprionate_with_formoterol', 'Fluticasone_poprionate_with_formoterol'),
-        ('Fluticasone_poprionate_with_salmeterol', 'Fluticasone_poprionate_with_salmeterol'),
-        ('Fluticasone_furoate_with_vilanterol', 'Fluticasone_furoate_with_vilanterol'),
-    ]
+    """
+    This model contains all records relating a user to an inhaler. This is to normalise the database such that we can
+    relate user_id to inhaler_id, and store each instances number of puffs per day etc. It contains methods to reset
+    the daily puff count each day, as well as increment puffs today and decrease puffs remaining.
+    """
+
     # models.PROTECT works so if a user tries to delete an 'Inhaler' record (the one in quotations) then it wont let you
     # models.CASCADE will delete all related UserInhalers if a UserProfile (user) is deleted
 
-    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='inhalers_user', null=False)
-    # inhaler_id = models.ForeignKey('Inhaler', on_delete=models.PROTECT, related_name='users_inhaler', null=False)
-    inhaler_type = models.CharField(max_length=200, choices=inhaler_type)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_inhaler', null=False)
+    inhaler_id = models.ForeignKey('Inhalers', on_delete=models.PROTECT, related_name='inhaler_user', null=False)
     puffs_today = models.IntegerField(default=0)
     puffs_remaining = models.IntegerField(null=False)
     puffs_per_day = models.IntegerField(null=True, blank=True)
-
-    dose = models.IntegerField(help_text='Dose in micrograms', null=True, blank=True)
-    puffs = models.IntegerField(help_text='Number of puffs per usage', null=True, blank=True)
-    frequency = models.IntegerField(help_text='Number of uses per day',default=0)
     updated_at = models.DateTimeField(auto_now=True)  # attributes time
+
     class Meta:
         verbose_name = 'User Inhaler'
         verbose_name_plural = 'Users Inhalers'
@@ -159,17 +127,13 @@ class UserInhaler(models.Model):
         return_string = str(self.user_id) + " with " + str(self.inhaler_type)
         return return_string
 
-    def get_readable_type(self):
-        return self.inhaler_type.replace('_', ' ')
-
     def add_inhaler(self):
         # TODO Complete
         pass
 
-    # To reset puffs today to zero every day:
+    # To reset puffs today to zero every day
     def get_puffs_today(self):
         today_date = datetime.date.today()
-        # today_date = '2023-01-09'
         if self.updated_at.strftime('%Y-%m-%d') != str(today_date):
             self.puffs_today = 0
             self.save()
@@ -179,17 +143,26 @@ class UserInhaler(models.Model):
         # TODO Complete
         pass
 
-
+    # To log an inhaler usage.
     def log_puff(user_inhaler_id):
+        # Get the record where the user_inhaler_id matches that of the one on the site
         user_inhaler = UserInhaler.objects.get(pk=user_inhaler_id)
+        # Only allow a puff to be logged if they have puffs remaining
         if user_inhaler.puffs_remaining > 0:
-            user_inhaler.puffs_today += 1  # change field
+            # Increment the puffs today field for the current record
+            user_inhaler.puffs_today += 1
+            # Decrease the puffs remaining field
             user_inhaler.puffs_remaining -= 1
-
-            user_inhaler.save()  # this will update only
+            # Update the table
+            user_inhaler.save()
             return 1
         return None
+
+
 class Inhalers(models.Model):
+    """
+    Contains all inhaler types / their names and has associated ID's.
+    """
     inhaler_type = [
         ('Beclametasone_dipropionate', 'Beclametasone_dipropionate'),
         ('Ciclesonide', 'Ciclesonide'),
@@ -205,39 +178,12 @@ class Inhalers(models.Model):
         ('Fluticasone_furoate_with_vilanterol', 'Fluticasone_furoate_with_vilanterol'),
     ]
 
-    remaing_puff_choice = (
-        ('10', '10'),
-        ('20', '20'),
-        ('30', '30'),
-        ('40', '40'),
-        ('50', '50'),
-        ('60', '60'),
-        ('70', '70'),
-        ('80', '80'),
-        ('90', '90'),
-        ('100','100'),
-    )
-    puffs_per_Day = (
-        ('1', '1'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-        ('5', '5'),
-        ('6', '6'),
-        ('7', '7'),
-        ('8', '8'),
-        ('9', '9'),
-        ('10','10'),
-    )
-
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='inhaler_user', null=False)
-    inhaler_type = models.CharField(max_length=200, choices=inhaler_type)
-    puffs_remaining = models.CharField(max_length=20, choices=remaing_puff_choice)
-    puffs = models.CharField(max_length=200, choices=puffs_per_Day)
-    per_Day = models.CharField(max_length=20, choices=puffs_per_Day)
+    name = models.CharField(max_length=64)
 
 class PollutionLevelInfo(models.Model):
+    """
+    A model where pollution level limits and their associated warnings are stored.
+    """
     band = models.CharField(max_length=6)
     lower_bound = models.IntegerField()
     upper_bound = models.IntegerField()
@@ -254,13 +200,22 @@ class PollutionLevelInfo(models.Model):
 
 
 class PollutionLevels(models.Model):
+    """
+    All locations' pollution levels are stored here, with each location being related by a foreign key.
+    """
     # TODO will need to edit at a later date to accomodate for different pollutants
     location_id = models.ForeignKey('Location', on_delete=models.CASCADE, related_name='location_pollution', null=False)
-    pollution_level = models.IntegerField()
+    pollution_level = models.IntegerField(help_text="Overall Pollution Level")
+    pollution_level_no2 = models.IntegerField(help_text="NO2 Pollution Level")
+    pollution_level_o3 = models.IntegerField(help_text="O3 Pollution Level")
+    pollution_level_so2 = models.IntegerField(help_text="SO2 Pollution Level")
+    pollution_level_pm10 = models.IntegerField(help_text="PM10 Particulate")
+    pollution_level_pm25 = models.IntegerField(help_text="PM25 Particulate")
+    pollution_level_pm2_5 = models.IntegerField(help_text="PM2.5 Particulate")
     pollution_date = models.DateField(default=datetime.date.today)
 
     # The current flag will indicate the record that has the current pollution level for a specific region
-    # (True = Current, False (0) = Previous). This allows us to build a history of pollution levels
+    # (True = Current, False (0) = Previous). This allows us to build a history of pollution levels.
     current_flag = models.BooleanField(default=True)
 
     class Meta:
@@ -278,15 +233,16 @@ class PollutionLevels(models.Model):
         pass
 
 class Boroughs(models.Model):
+
     OutwardName = models.CharField(max_length=128)
     ApiName = models.CharField(max_length=128)
 
-class Meta:
-    verbose_name = 'Boroughs'
-    verbose_name_plural = 'Boroughs'
-    ordering = ['ApiName']
+    class Meta:
+        verbose_name = 'Borough'
+        verbose_name_plural = 'Boroughs'
+        ordering = ['OutwardName']
 
-def __str__(self):
-    return self.OutwardName
+    def __str__(self):
+        return self.OutwardName
 
 
