@@ -205,7 +205,13 @@ class PollutionLevels(models.Model):
     """
     # TODO will need to edit at a later date to accomodate for different pollutants
     location_id = models.ForeignKey('Location', on_delete=models.CASCADE, related_name='location_pollution', null=False)
-    pollution_level = models.IntegerField()
+    pollution_level = models.IntegerField(help_text="Overall Pollution Level")
+    pollution_level_no2 = models.IntegerField(help_text="NO2 Pollution Level")
+    pollution_level_o3 = models.IntegerField(help_text="O3 Pollution Level")
+    pollution_level_so2 = models.IntegerField(help_text="SO2 Pollution Level")
+    pollution_level_pm10 = models.IntegerField(help_text="PM10 Particulate")
+    pollution_level_pm25 = models.IntegerField(help_text="PM25 Particulate")
+    pollution_level_pm2_5 = models.IntegerField(help_text="PM2.5 Particulate")
     pollution_date = models.DateField(default=datetime.date.today)
 
     # The current flag will indicate the record that has the current pollution level for a specific region
