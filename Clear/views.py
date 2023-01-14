@@ -40,8 +40,9 @@ class UserInhalerView(ListView):
 
 
 
-# TODO @Cassy + Kareena - Finish the code for this view sectio n- need to change the tempalte view
+# TODO @Cassy + Kareena - Finish the code for this view section - need to change the tempalte view
 class PollutionView(TemplateView):
+    model = AUTH_USER_MODEL
     template_name = 'clear/main/pollution.html'
 
 
@@ -51,7 +52,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
     user_form = SettingsForm
     def get(self, request):
         user = get_object_or_404(AppUser, id = request.user.id)
-        inhalers = Inhalers.objects.filter(user = request.user)
+        inhalers = Inhalers.objects.filter(user_id = request.user.id)
         user_form = self.user_form(instance = user)
         return render(request, self.template_name, context= {"form":user_form,"inhalers":inhalers})
 
@@ -131,3 +132,4 @@ def logCurrentLocation(request, app_user_id):
     # you should update you model field here
     AppUser.set_new_current_location(app_user_id)
     return redirect(reverse_lazy('pollution'))
+
