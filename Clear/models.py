@@ -190,7 +190,7 @@ class PollutionLevels(models.Model):
         pass
 
 class Boroughs(models.Model):
-
+    code = models.IntegerField()
     OutwardName = models.CharField(max_length=128)
     ApiName = models.CharField(max_length=128)
 
