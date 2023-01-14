@@ -103,32 +103,6 @@ class Location(models.Model):
     def __str__(self):
         return self.name
 
-
-# class Inhaler(models.Model):
-#     name = models.CharField(max_length=12)
-#
-#     # TODO consider normalising this table into 3 separate (dosage, strength, inhaler) to relate better
-#     low_dose = models.IntegerField()  # 100 micrograms
-#     low_puffs = models.IntegerField()  # 2 puffs
-#     low_frequency = models.IntegerField()  # twice a day
-#
-#     med_dose = models.IntegerField()
-#     med_puffs = models.IntegerField()
-#     med_frequency = models.IntegerField()
-#
-#     hi_dose = models.IntegerField()
-#     hi_puffs = models.IntegerField()
-#     hi_frequency = models.IntegerField()
-#
-#     class Meta:
-#         verbose_name = 'Inhaler'
-#         verbose_name_plural = 'Inhalers'
-#         ordering = ['id']
-#
-#     def __str__(self):
-#         return self.name
-
-
 class UserInhaler(models.Model):
     """
     This model contains all records relating a user to an inhaler. This is to normalise the database such that we can
