@@ -14,12 +14,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
-
-
-
-
 from ClearWeb.settings import AUTH_USER_MODEL
-
 
 
 # Create your views here.
@@ -37,7 +32,6 @@ class UserInhalerView(ListView):
         return qs
     model = UserInhaler
     template_name = 'clear/main/inhaler.html'
-
 
 
 # TODO @Cassy + Kareena - Finish the code for this view sectio n- need to change the tempalte view
