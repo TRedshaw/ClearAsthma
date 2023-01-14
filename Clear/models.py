@@ -71,8 +71,8 @@ class UserLocations(models.Model):
         ('other', 'Other')
     ]
 
-    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='locations_user', null=False)
-    location_id = models.ForeignKey('Location', on_delete=models.PROTECT, related_name='users_location', null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='locations_user', null=False)
+    location = models.ForeignKey('Location', on_delete=models.PROTECT, related_name='users_location', null=True)
     location_type = models.CharField(max_length=5, choices=LOCATION_TYPES)
 
     class Meta:
@@ -111,8 +111,8 @@ class UserInhaler(models.Model):
     # models.PROTECT works so if a user tries to delete an 'Inhaler' record (the one in quotations) then it wont let you
     # models.CASCADE will delete all related UserInhalers if a UserProfile (user) is deleted
 
-    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_inhaler', null=False)
-    inhaler_id = models.ForeignKey('Inhalers', on_delete=models.PROTECT, related_name='inhaler_user', null=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_inhaler', null=False)
+    inhaler = models.ForeignKey('Inhalers', on_delete=models.PROTECT, related_name='inhaler_user', null=False)
     puffs_today = models.IntegerField(default=0)
     puffs_remaining = models.IntegerField(null=False)
     puffs_per_day = models.IntegerField(null=True, blank=True)
@@ -204,7 +204,7 @@ class PollutionLevels(models.Model):
     All locations' pollution levels are stored here, with each location being related by a foreign key.
     """
     # TODO will need to edit at a later date to accomodate for different pollutants
-    location_id = models.ForeignKey('Location', on_delete=models.CASCADE, related_name='location_pollution', null=False)
+    location = models.ForeignKey('Location', on_delete=models.CASCADE, related_name='location_pollution', null=False)
     pollution_level = models.IntegerField(help_text="Overall Pollution Level")
     pollution_level_no2 = models.IntegerField(help_text="NO2 Pollution Level")
     pollution_level_o3 = models.IntegerField(help_text="O3 Pollution Level")
