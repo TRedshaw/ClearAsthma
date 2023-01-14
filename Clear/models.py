@@ -180,13 +180,10 @@ class PollutionLevels(models.Model):
         return_string = "Level " + str(self.pollution_level) + "@" + str(self.borough_id)
         return return_string
 
-    def update_pollution_levels(self):
-        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
-        UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
-                
+    def update_pollution_levels(self, location):   
         url = ''
         url += 'https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/GroupName='
-        location ='kensingtonandchelsea'
+        borough = location
         url += location
         response = requests.get(url)
         root = ET.fromstring(response.content)
@@ -202,11 +199,28 @@ class PollutionLevels(models.Model):
                 pollutiontypes[child.attrib['SpeciesCode']]=child.attrib['AirQualityIndex']
                 total += int(child.attrib['AirQualityIndex'])
                 number += 1
+
         obj=PollutionLevels()
         for key in pollutiontypes:
+            speciesname='pollution_level'+key.lower()
             obj.speciesname = pollutiontypes[key]
         obj.pollution_level = total/number
-        obj.current_flag = NOT NULL
+        obj.current_flag = True
+
+        import sqlite3
+
+        # Create a SQL connection to our SQLite database
+        con = sqlite3.connect("db.sqlite3")
+        cur = con.cursor()
+
+        # Return all results of query
+        cur.execute('SELECT code FROM Clear_boroughs WHERE ApiName=location')
+        obj.borough_id=cur.fetchall()
+        # Be sure to close the connection
+        cur.execute('SELECT OutwardName FROM Clear_boroughs WHERE ApiName=location')
+        location_full_name=cur.fetchall()
+        con.close()
+
         objects.append(obj)
         PollutionLevels.bulk_create(objects)
 
@@ -221,7 +235,7 @@ class PollutionLevels(models.Model):
 
                 # Fill those newly created columns
         for i in range(len(postcodes.index)):
-            if postcodes.name[i] == "Kensington and Chelsea":
+            if postcodes.name[i] == location_full_name:
                 postcodes.overall_pollution_level[i]= overall_pollution_level
                 postcodes.fill[i] = "#%06x" % random.randint(0, 0xFFFFFF)
             else:
