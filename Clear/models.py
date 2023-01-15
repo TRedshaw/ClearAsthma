@@ -9,6 +9,7 @@ import json
 import geopandas as gpd
 import random
 
+
 class AppUser(AbstractUser):
     """
     This model creates the table to store all records of users. It extends the Django AbstractUser default user table
@@ -180,13 +181,10 @@ class PollutionLevels(models.Model):
         return_string = "Level " + str(self.pollution_level) + "@" + str(self.borough_id)
         return return_string
 
-    def update_pollution_levels(self):
-        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
-        UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
-                
+    def update_pollution_levels(self, location):   
         url = ''
         url += 'https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/GroupName='
-        location ='kensingtonandchelsea'
+        borough = location
         url += location
         response = requests.get(url)
         root = ET.fromstring(response.content)
@@ -202,11 +200,28 @@ class PollutionLevels(models.Model):
                 pollutiontypes[child.attrib['SpeciesCode']]=child.attrib['AirQualityIndex']
                 total += int(child.attrib['AirQualityIndex'])
                 number += 1
+
         obj=PollutionLevels()
         for key in pollutiontypes:
+            speciesname='pollution_level'+key.lower()
             obj.speciesname = pollutiontypes[key]
         obj.pollution_level = total/number
         obj.current_flag = True
+
+        import sqlite3
+
+        # Create a SQL connection to our SQLite database
+        con = sqlite3.connect("db.sqlite3")
+        cur = con.cursor()
+
+        # Return all results of query
+        cur.execute('SELECT code FROM Clear_boroughs WHERE ApiName=location')
+        obj.borough_id=cur.fetchall()
+        # Be sure to close the connection
+        cur.execute('SELECT OutwardName FROM Clear_boroughs WHERE ApiName=location')
+        location_full_name=cur.fetchall()
+        con.close()
+
         objects.append(obj)
         PollutionLevels.bulk_create(objects)
 
@@ -214,22 +229,23 @@ class PollutionLevels(models.Model):
         CURRENT_GEOJSON_FILE = 'london_boroughs.json'
         UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
                 # Read current geojson file into a GeoDataFrame from gpd
-        postcodes = gpd.read_file(CURRENT_GEOJSON_FILE)
+        boroughs = gpd.read_file(CURRENT_GEOJSON_FILE)
                 # Add a new columns for features like color or pollution level
-        postcodes.insert(loc=1,column='overall_pollution_level',value=0)
-        postcodes.insert(loc=2,column='fill',value=0)
+        boroughs.insert(loc=1,column='obj.pollution_level',value=0)
+        boroughs.insert(loc=2,column='fill',value=0)
 
                 # Fill those newly created columns
-        for i in range(len(postcodes.index)):
-            if postcodes.name[i] == "Kensington and Chelsea":
-                postcodes.overall_pollution_level[i]= overall_pollution_level
-                postcodes.fill[i] = "#%06x" % random.randint(0, 0xFFFFFF)
+        for i in range(len(boroughs.index)):
+            if boroughs.name[i] == location_full_name:
+                boroughs.overall_pollution_level[i]= obj.pollution_level
+                boroughs.fill[i] = "#%06x" % random.randint(0, 0xFFFFFF)
             else:
-                postcodes.overall_pollution_level[i]= 0
-                postcodes.fill[i] = "000000"
+                boroughs.obj.pollution_level[i]= 0
+                boroughs.fill[i] = "000000"
         # Write back updated GeoDataFrame to geojson file
-        postcodes.to_file(UPDATED_GEOJSON_FILE, driver="GeoJSON")
+        boroughs.to_file(UPDATED_GEOJSON_FILE, driver="GeoJSON")
         pass
+
 
 class Boroughs(models.Model):
     code = models.IntegerField()
