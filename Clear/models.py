@@ -254,22 +254,27 @@ class PollutionLevels(models.Model):
 
     @classmethod
     def get_borough_map(cls):
-        boroughs = Boroughs.objects.all()
-        for borough in boroughs:
-
-            CURRENT_GEOJSON_FILE = 'london_boroughs.json'
-            # Read current geojson file into a GeoDataFrame from gpd
-            bor = gpd.read_file(CURRENT_GEOJSON_FILE)
-            bor.insert(loc=1, column='color', value=0)
-
-            for i in range(len(bor.index)):
-                bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
-                # print(bor.name[i], borough)
-                # if bor.name[i] == borough:
-                #     bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
-                # else:
-                #     bor.color[i] = "000000"
-        return bor.to_json()
+        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
+        # Read current geojson file into a GeoDataFrame from gpd
+        bor = gpd.read_file(CURRENT_GEOJSON_FILE)
+        bor1=bor.copy()
+        bor1.insert(loc=1, column='color', value=000000)
+        current_borough_id=int
+        colours={0:'#000000', 1:'#27a139', 2:'#27a139', 3:'#27a139', 4:'#f2f21d', 5:'#f2f21d', 6:'#f2f21d', 7:'#e6331c', 8:'#e6331c', 9:'#e6331c', 10:'#ab1df2'}
+        for i in range(len(bor1.index)):                    
+            current_borough_obj=Boroughs.objects.filter(OutwardName=bor1.name[i]).first()
+            if current_borough_obj==None:
+                pass
+            else:
+                current_borough_id=current_borough_obj.id
+                
+                overall_pollution_level_obj = PollutionLevels.objects.filter(borough_id=current_borough_id, current_flag=1).first()
+                if overall_pollution_level_obj==None:
+                    pass
+                else:
+                    overall_pollution_level = overall_pollution_level_obj.pollution_level
+                    bor1.color[i] = colours[overall_pollution_level]
+        return bor1.to_json()
 
 class Boroughs(models.Model):
     code = models.IntegerField()
