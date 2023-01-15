@@ -60,6 +60,9 @@
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
                                 {# Display alerts for inhaler #}
+                                {%  if UserInhaler.puffs_today == UserInhaler.puffs_per_day %}
+                                    <li class="list-group-item">You have reached your daily dosage.</li>
+                                {% endif %}
                                 {%  if UserInhaler.puffs_today > UserInhaler.puffs_per_day %}
                                     <li class="list-group-item">You have exceeded your daily dosage.</li>
                                 {% endif %}
