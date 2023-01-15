@@ -10,3 +10,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         PollutionLevels.update_pollution_levels()
         self.stdout.write(self.style.SUCCESS('Pollution levels successfully updated'))
+        return
+    
