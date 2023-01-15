@@ -20,7 +20,7 @@
 		<h1 class="h3 font-weight-normal mb-3 text-center ">Settings</h1>
 		{% if messages %}
 		{% for message in messages %}
-		<div class="alert alert- {{ message.tags }} col-12">{{message}}</div>
+		    <div class="alert alert-{{ message.tags }} col-12">{{message}}</div>
 		{% endfor %}
 		{% endif %}
 			<div class="row">
