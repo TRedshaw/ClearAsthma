@@ -40,7 +40,7 @@
                     <div class="dropdown">
                         <!--What is displayed on dropdown-->
                         <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                        Current Location
+                        Choose Current Location
                         </button>
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -48,6 +48,75 @@
                             {% for borough in borough_choices %}
                                 <a class="dropdown-item" href="/clear/pollution/set_current_location/{{ borough.id }}">{{ borough.OutwardName }}</a>
                             {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <h5>{{ user_boroughs.current_borough.OutwardName }} (Current Location)</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm table-striped table-borderless">
+                                <tbody>
+                                <tr><th>Average</th><td>{{ current_borough_levels.pollution_level }}</td></tr>
+                                <tr><th>NO2</th><td>{{ current_borough_levels.pollution_level_no2 }}</td></tr>
+                                <tr><th>SO2</th><td>{{ current_borough_levels.pollution_level_so2 }}</td></tr>
+                                <tr><th>O3</th><td>{{ current_borough_levels.pollution_level_o3 }}</td></tr>
+                                <tr><th>PM10</th><td>{{ current_borough_levels.pollution_level_pm10 }}</td></tr>
+                                <tr><th>PM2.5</th><td>{{ current_borough_levels.pollution_level_pm2_5 }}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <h5>{{ user_boroughs.home_borough.OutwardName }} (Home)</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm table-striped table-borderless">
+                                <tbody>
+                                <tr><th>Average</th><td>{{ home_borough_levels.pollution_level }}</td></tr>
+                                <tr><th>NO2</th><td>{{ home_borough_levels.pollution_level_no2 }}</td></tr>
+                                <tr><th>SO2</th><td>{{ home_borough_levels.pollution_level_so2 }}</td></tr>
+                                <tr><th>O3</th><td>{{ home_borough_levels.pollution_level_o3 }}</td></tr>
+                                <tr><th>PM10</th><td>{{ home_borough_levels.pollution_level_pm10 }}</td></tr>
+                                <tr><th>PM2.5</th><td>{{ home_borough_levels.pollution_level_pm2_5 }}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <h5>{{ user_boroughs.work_borough.OutwardName }} (Work)</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm table-striped table-borderless">
+                                <tbody>
+                                <tr><th>Average</th><td>{{ work_borough_levels.pollution_level }}</td></tr>
+                                <tr><th>NO2</th><td>{{ work_borough_levels.pollution_level_no2 }}</td></tr>
+                                <tr><th>SO2</th><td>{{ work_borough_levels.pollution_level_so2 }}</td></tr>
+                                <tr><th>O3</th><td>{{ work_borough_levels.pollution_level_o3 }}</td></tr>
+                                <tr><th>PM10</th><td>{{ work_borough_levels.pollution_level_pm10 }}</td></tr>
+                                <tr><th>PM2.5</th><td>{{ work_borough_levels.pollution_level_pm2_5 }}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <h5>{{ user_boroughs.other_borough.OutwardName }} (Other)</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm table-striped table-borderless">
+                                <tbody>
+                                <tr><th>Average</th><td>{{ other_borough_levels.pollution_level }}</td></tr>
+                                <tr><th>NO2</th><td>{{ other_borough_levels.pollution_level_no2 }}</td></tr>
+                                <tr><th>SO2</th><td>{{ other_borough_levels.pollution_level_so2 }}</td></tr>
+                                <tr><th>O3</th><td>{{ other_borough_levels.pollution_level_o3 }}</td></tr>
+                                <tr><th>PM10</th><td>{{ other_borough_levels.pollution_level_pm10 }}</td></tr>
+                                <tr><th>PM2.5</th><td>{{ other_borough_levels.pollution_level_pm2_5 }}</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
