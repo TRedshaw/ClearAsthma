@@ -52,22 +52,22 @@
 				</div>
                 <div class="col-lg-6">
 					{% if inhalers %}
-					{% for inhaler in inhalers %}
+                    {% for inhaler in inhalers %}
 					<div class="card mb-3 " style="border-radius: 1em;">
 						<div class="card-body">
 							<div class="d-flex justify-content-end" style="margin-bottom: -20px;" >
-								<a class="btn btn-sm btn-danger" href="{% url 'delete_inaler' inhaler.id%}">
+								<a class="btn btn-sm btn-danger" href="{% url 'delete_inhaler' inhaler.id%}">
 								Delete Inhaler
 							    </a>
 							</div>
-							<input type="hidden" name="inhalerid" value="{{inhaler.id}}">
+							<input type="hidden" name="inhaler_id" value="{{inhaler.id}}">
 							<div class="from-group">
 								{% if forloop.counter  == 1 %}
-								<label for="main_inheler" class="">Main Inhaler Type</label>
+								<label for="main_inhaler" class="">Main Inhaler Type</label>
 								{% else %}
-								<label for="main_inheler" class="">Secondary Inhaler Type</label>
+								<label for="main_inhaler" class="">Secondary Inhaler Type</label>
 								{% endif %}
-								<select class="form-control form-control-sm" name="inhaler_type"  id="main_inheler">
+								<select class="form-control form-control-sm" name="inhaler_type"  id="main_inhaler">
 									<option value="Beclametasone_dipropionate"{% if inhaler.inhaler_type == 'Beclametasone_dipropionate' %}selected{% endif %}>Beclametasone dipropionate (pMDI)</option>
 
 									<option value="Ciclesonide"{% if inhaler.inhaler_type == 'Ciclesonide' %}selected{% endif %}>Ciclesonide (pMDI)</option>
@@ -134,8 +134,8 @@
 		{% csrf_token %}
 		<div class="modal-body">
 				<div class="from-group mb-1">
-					<label for="main_inheler" class="">Inhaler Type</label>
-					<select class="form-control form-control-sm" name="inhaler_type" id="main_inheler">
+					<label for="main_inhaler" class="">Inhaler Type</label>
+					<select class="form-control form-control-sm" name="inhaler_type" id="main_inhaler">
 						<option value="Beclametasone_dipropionate">Beclametasone dipropionate (pMDI)</option>
 						<option value="Ciclesonide">Ciclesonide (pMDI)</option>
 						<option value="Fluticasone_poprionate">Fluticasone poprionate(pMDI)</option>
