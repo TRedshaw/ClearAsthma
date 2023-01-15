@@ -1,0 +1,1 @@
+web: gunicorn ClearAsthma.wsgi --log-file -
