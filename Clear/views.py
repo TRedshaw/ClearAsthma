@@ -10,7 +10,7 @@ from django.views.generic import View
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
