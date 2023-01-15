@@ -105,6 +105,9 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             messages.error(request, 'Please fill in all required fields')
             return redirect('settings')
 
+def BoroughView(request):
+    data = PollutionLevels.update_pollution_levels()
+    return JsonResponse(data)
 
 def getIDfromInhalerType(inhaler_type):
     inhaler_name = ""
