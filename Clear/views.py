@@ -10,11 +10,13 @@ from django.views.generic import View
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from ClearWeb.settings import AUTH_USER_MODEL
+from django.contrib.auth import get_user_model
+
 import json
 
 # Create view for register page
@@ -46,6 +48,8 @@ class PollutionView(LoginRequiredMixin, TemplateView):
         current_user = self.request.user
         context = super().get_context_data(**kwargs)
         context['borough_choices'] = Boroughs.objects.all()
+        context['user_boroughs'] = get_user_model().objects.select_related("current_borough","home_borough","work_borough","other_borough").get(pk=current_user.id)
+
         context['current_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.current_borough_id).first()
         context['home_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.home_borough_id).first()
         context['work_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.work_borough_id).first()
@@ -103,7 +107,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             return redirect('settings')
 
 def BoroughView(request):
-    data = PollutionLevels.update_pollution_levels()
+    data = PollutionLevels.get_borough_map()
     json_data = json.loads(data)
     return JsonResponse(json_data)
 
@@ -185,6 +189,5 @@ def logCurrentLocation(request, borough_id):
 def updatePollutionLevels(request):
     PollutionLevels.update_pollution_levels()
     return HttpResponse("OK")
-
 
 
