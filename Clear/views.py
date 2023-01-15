@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from ClearWeb.settings import AUTH_USER_MODEL
-
+import json
 
 # Create your views here.
 class RegisterView(CreateView):
@@ -105,6 +105,10 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             messages.error(request, 'Please fill in all required fields')
             return redirect('settings')
 
+def BoroughView(request):
+    data = PollutionLevels.update_pollution_levels()
+    json_data = json.loads(data)
+    return JsonResponse(json_data)
 
 def getIDfromInhalerType(inhaler_type):
     inhaler_name = ""
