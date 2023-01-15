@@ -1,8 +1,9 @@
-{% extends "clear/main/base.html" %}
+{% extends "clear/main/base.html" %} <!--extends base template to inherit its structure & layout-->
 
-<!-- makes nav item active when on this page -->
+<!-- Create nav_item_pollution block that is active when page rendered -->
 {% block nav_item_pollution %}active{% endblock nav_item_pollution %}
 
+<!--Main block-->
 {% block content %}
 
     <head>
@@ -11,14 +12,17 @@
     </head>
 
     <body>
+        <!--Main title-->
         <div class="container">
            <div class="row justify-content-center">
                <h1 class="display-4">POLLUTION </h1>
            </div>
         </div>
 
-        <div style="padding: 0px 100px 30px 100px">
+        <div style="padding: 0px 100px 30px 100px"> <!--borders around main page.-->
+            <!--Main row divided into two columns-->
             <div class="row">
+                <!--Column one for map-->
                 <div class="col-8 test2" style="padding-right: 45px">
                     <div class="row justify-content-center">
                         <h2 class="display-4" >Map of London</h2>
@@ -26,17 +30,21 @@
                     <div id='map' width="100%" style='height:600px'></div>
                 </div>
 
+                <!--Column two for pollution warnings in current location-->
                 <div class="col-4 test1">
                     <div class="row justify-content-center">
                         <h2 class="display-4" >Warnings</h2>
                     </div>
 
+                    <!--Dropdown button to set current location-->
                     <div class="dropdown">
+                        <!--What is displayed on dropdown-->
                         <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                         Current Location
                         </button>
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <!--Menu populated by for loop that iterates over borough names in database-->
                             {% for borough in borough_choices %}
                                 <a class="dropdown-item" href="/clear/pollution/set_current_location/{{ borough.id }}">{{ borough.OutwardName }}</a>
                             {% endfor %}
@@ -46,19 +54,21 @@
             </div>
         </div>
 
+        <!--Import jQuery & CDN-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script>
-            $.get("{% url 'getboroughdata' %}", function(data) {
-                mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw';
+
+            $.get("{% url 'getboroughdata' %}", function(data) {   // access data from urls.py-->
+                mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw'; <!--Mapbox token to access the map-->
                 var map = new mapboxgl.Map({
-                    container: 'map',
-                    style: 'mapbox://styles/mapbox/streets-v10',
-                    center: [-0.163611, 51.500610], // starting position [lng, lat]
+                    container: 'map',   // add to div with id of 'map'
+                    style: 'mapbox://styles/mapbox/streets-v10', // style of map
+                    center: [-0.163611, 51.500610], // starting position [lng, lat] in London
                     zoom: 10 // starting zoom
                 });
 
                 map.on('load', () => {
-                    // Add a data source containing GeoJSON data.
+                    // Add a data source containing GeoJSON data with all the polygons.
                     map.addSource('maine', {
                         'type': 'geojson',
                         'data': data
@@ -76,6 +86,7 @@
                             'fill-opacity': 0.5
                         }
                     });
+
                     // Add a black outline around the polygon.
                     map.addLayer({
                         'id': 'outline',
