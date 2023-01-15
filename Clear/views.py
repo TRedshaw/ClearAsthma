@@ -37,13 +37,13 @@ class UserInhalerView(LoginRequiredMixin, ListView):
         return qs
     model = UserInhaler
     template_name = 'clear/main/inhaler.html'
-    login_url = '/clear/login/'
+    login_url = '/login/'
 
 
 # TODO Add context data here
 class PollutionView(LoginRequiredMixin, TemplateView):
     template_name = 'clear/main/pollution.html'
-    login_url = '/clear/login/'
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         current_user = self.request.user
@@ -65,7 +65,7 @@ class PollutionView(LoginRequiredMixin, TemplateView):
 class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'clear/main/settings.html'
     user_form = SettingsForm
-    login_url = '/clear/login/'
+    login_url = '/login/'
     def get(self, request):
         user = get_object_or_404(AppUser, id = request.user.id)
         inhalers = UserInhaler.objects.filter(user_id = user.id)
