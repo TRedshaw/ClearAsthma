@@ -263,7 +263,6 @@ class PollutionLevels(models.Model):
                     )
             except KeyError:
                 pass
-            return bor.to_json()
 
 class Boroughs(models.Model):
     code = models.IntegerField()
