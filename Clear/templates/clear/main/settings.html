@@ -51,16 +51,16 @@
 					</div>
 				</div>
                 <div class="col-lg-6">
-					{% if UserInhaler %}
-                    {% for Inhaler in UserInhaler %}
+					{% if inhalers %}
+                    {% for inhaler in inhalers %}
 					<div class="card mb-3 " style="border-radius: 1em;">
 						<div class="card-body">
 							<div class="d-flex justify-content-end" style="margin-bottom: -20px;" >
-								<a class="btn btn-sm btn-danger" href="{% url 'delete_inhaler' Inhaler.id%}">
+								<a class="btn btn-sm btn-danger" href="{% url 'delete_inhaler' inhaler.id%}">
 								Delete Inhaler
 							    </a>
 							</div>
-							<input type="hidden" name="inhaler_id" value="{{Inhaler.id}}">
+							<input type="hidden" name="inhaler_id" value="{{inhaler.id}}">
 							<div class="from-group">
 								{% if forloop.counter  == 1 %}
 								<label for="main_inhaler" class="">Main Inhaler Type</label>

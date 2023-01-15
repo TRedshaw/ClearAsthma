@@ -81,7 +81,7 @@ class UserInhaler(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return_string = str(self.user_id) + " with " + str(self.inhaler_type)
+        return_string = str(self.user_id) + " with " + str(self.inhaler.name)
         return return_string
 
     def add_inhaler(self):
