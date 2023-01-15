@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import UpdateView, CreateView
 from Clear.forms import RegisterForm, SettingsForm
-from Clear.models import AppUser, UserInhaler, Inhalers
+from Clear.models import AppUser, UserInhaler, Inhalers, Boroughs, PollutionLevels
 from django.shortcuts import get_object_or_404
 # from django.views import View
 from django.views.generic import View
@@ -27,6 +27,7 @@ class RegisterView(CreateView):
 
 
 class UserInhalerView(LoginRequiredMixin, ListView):
+    # Get the
     def get_queryset(self):
         qs = UserInhaler.objects.filter(user_id=self.request.user.id)
         return qs
@@ -35,11 +36,20 @@ class UserInhalerView(LoginRequiredMixin, ListView):
     login_url = '/clear/login/'
 
 
-# TODO @Cassy + Kareena - Finish the code for this view sectio n- need to change the tempalte view
+# TODO Add context data here
 class PollutionView(LoginRequiredMixin, TemplateView):
     template_name = 'clear/main/pollution.html'
     login_url = '/clear/login/'
 
+    def get_context_data(self, request, **kwargs):
+        current_user = request.user
+        context = super().get_context_data(**kwargs)
+        context['borough_choices'] = Boroughs.objects.all()
+        context['current_borough_levels'] = PollutionLevels.objects.get(id=current_user.current_borough_id)
+        context['home_borough_levels'] = PollutionLevels.objects.get(id=current_user.home_borough_id)
+        context['work_borough_levels'] = PollutionLevels.objects.get(id=current_user.work_borough_id)
+        context['other_borough_levels'] = PollutionLevels.objects.get(id=current_user.other_borough_id)
+        return context
 
 # TODO @Anna -  Finish the code for this view section - need to change the tempalte view
 class SettingsView(LoginRequiredMixin, UpdateView):
@@ -166,8 +176,8 @@ def logInhalerPuff(request, user_inhaler_id):
     return redirect("inhalers")
 
 
-# TODO FIX
-def logCurrentLocation(request, app_user_id):
-    # you should update you model field here
-    AppUser.set_new_current_location(app_user_id)
+def logCurrentLocation(request, borough_id):
+    current_user = request.user
+    AppUser.set_new_current_borough(current_user, borough_id)
     return redirect(reverse_lazy('pollution'))
+

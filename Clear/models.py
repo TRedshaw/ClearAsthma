@@ -3,6 +3,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import datetime
+import requests
+import xml.etree.ElementTree as ET
+import json
+import geopandas as gpd
+import random
 
 
 class AppUser(AbstractUser):
@@ -38,11 +43,11 @@ class AppUser(AbstractUser):
     def __str__(self):
         return self.username
 
-    # TODO FIX
-    def set_new_current_location(self):
-        current_location = AppUser.objects.get(pk=id)
-        current_location.current_location_id = 1  # change field
-        current_location.save()  # this will update only
+    def set_new_current_borough(current_user, borough_id):
+        app_user = AppUser.objects.get(pk=current_user.id)
+        borough = Boroughs.objects.get(id=borough_id)
+        app_user.current_borough_id = borough.id
+        app_user.save()
 
     def quick_set_current_location(self):
         # TODO For when they choose just work or other or home it gives them the pollution level by clicking
@@ -176,10 +181,71 @@ class PollutionLevels(models.Model):
         return_string = "Level " + str(self.pollution_level) + "@" + str(self.borough_id)
         return return_string
 
-    def update_pollution_levels(self):
-        # TODO Complete - when the table updates, will need to set all flags to false, and import all new, current,
-        #  pollution levels to true
+    def update_pollution_levels(self, location):   
+        url = ''
+        url += 'https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/GroupName='
+        borough = location
+        url += location
+        response = requests.get(url)
+        root = ET.fromstring(response.content)
+                
+        total=0
+        number=0
+        properties_dict = {}
+        pollutiontypes={}
+        objects=[]
+
+        for child in root.iter('*'):
+            if child.tag == 'Species':
+                pollutiontypes[child.attrib['SpeciesCode']]=child.attrib['AirQualityIndex']
+                total += int(child.attrib['AirQualityIndex'])
+                number += 1
+
+        obj=PollutionLevels()
+        for key in pollutiontypes:
+            speciesname='pollution_level'+key.lower()
+            obj.speciesname = pollutiontypes[key]
+        obj.pollution_level = total/number
+        obj.current_flag = True
+
+        import sqlite3
+
+        # Create a SQL connection to our SQLite database
+        con = sqlite3.connect("db.sqlite3")
+        cur = con.cursor()
+
+        # Return all results of query
+        cur.execute('SELECT code FROM Clear_boroughs WHERE ApiName=location')
+        obj.borough_id=cur.fetchall()
+        # Be sure to close the connection
+        cur.execute('SELECT OutwardName FROM Clear_boroughs WHERE ApiName=location')
+        location_full_name=cur.fetchall()
+        con.close()
+
+        objects.append(obj)
+        PollutionLevels.bulk_create(objects)
+
+
+        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
+        UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
+                # Read current geojson file into a GeoDataFrame from gpd
+        boroughs = gpd.read_file(CURRENT_GEOJSON_FILE)
+                # Add a new columns for features like color or pollution level
+        boroughs.insert(loc=1,column='obj.pollution_level',value=0)
+        boroughs.insert(loc=2,column='fill',value=0)
+
+                # Fill those newly created columns
+        for i in range(len(boroughs.index)):
+            if boroughs.name[i] == location_full_name:
+                boroughs.overall_pollution_level[i]= obj.pollution_level
+                boroughs.fill[i] = "#%06x" % random.randint(0, 0xFFFFFF)
+            else:
+                boroughs.obj.pollution_level[i]= 0
+                boroughs.fill[i] = "000000"
+        # Write back updated GeoDataFrame to geojson file
+        boroughs.to_file(UPDATED_GEOJSON_FILE, driver="GeoJSON")
         pass
+
 
 class Boroughs(models.Model):
     code = models.IntegerField()
