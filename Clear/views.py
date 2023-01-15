@@ -19,17 +19,18 @@ from django.contrib.auth import get_user_model
 
 import json
 
-# Create your views here.
+# Create view for register page
 class RegisterView(CreateView):
-    # Create view for register page
+
     model = AUTH_USER_MODEL
     form_class = RegisterForm
     template_name = 'clear/registration/register.html'
     success_url = reverse_lazy('login')
 
-
+# Create view for inhaler log page
 class UserInhalerView(LoginRequiredMixin, ListView):
-    # Get the
+
+    # Filter the UserInhaler model to only the logged in user's inhalers
     def get_queryset(self):
         qs = UserInhaler.objects.filter(user_id=self.request.user.id)
         return qs
@@ -174,9 +175,9 @@ def delete_inhaler(request, *args, **kwargs):
 
 
 def logInhalerPuff(request, user_inhaler_id):
+    # Allow user to log puff while the inhaler has > 0 puffs remaining
     if UserInhaler.log_puff(user_inhaler_id) is not None:
         return redirect(reverse_lazy('inhalers'))
-    #messages.warning(request,"Inhaler cannot be logged any more.")
     return redirect("inhalers")
 
 
