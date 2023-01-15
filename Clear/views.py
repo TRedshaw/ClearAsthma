@@ -102,7 +102,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             return redirect('settings')
 
 def BoroughView(request):
-    data = PollutionLevels.update_pollution_levels()
+    data = PollutionLevels.get_borough_map()
     json_data = json.loads(data)
     return JsonResponse(json_data)
 
@@ -184,6 +184,5 @@ def logCurrentLocation(request, borough_id):
 def updatePollutionLevels(request):
     PollutionLevels.update_pollution_levels()
     return HttpResponse("OK")
-
 
 

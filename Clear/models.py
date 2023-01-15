@@ -206,11 +206,6 @@ class PollutionLevels(models.Model):
             try:
                 borough = Boroughs.objects.filter(code=local_authority['@LocalAuthorityCode']).first()
 
-                CURRENT_GEOJSON_FILE = 'london_boroughs.json'
-                # Read current geojson file into a GeoDataFrame from gpd
-                bor = gpd.read_file(CURRENT_GEOJSON_FILE)
-                bor.insert(loc=1,column='color',value=0)
-                
                 for site in local_authority['Site']:
                     site_pollutions_level = 0
                     try:
@@ -239,13 +234,6 @@ class PollutionLevels(models.Model):
                         pass
 
                 if borough != None:
-                    for i in range(len(bor.index)):
-                        bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
-                        print(bor.name[i],borough)
-                        # if bor.name[i] == borough:
-                        #     bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
-                        # else:
-                        #     bor.color[i] = "000000"
                     PollutionLevels.objects.filter(borough_id=borough.id).update(current_flag=0)
 
                     PollutionLevels.objects.create(
@@ -263,6 +251,25 @@ class PollutionLevels(models.Model):
                     )
             except KeyError:
                 pass
+
+    @classmethod
+    def get_borough_map(cls):
+        boroughs = Boroughs.objects.all()
+        for borough in boroughs:
+
+            CURRENT_GEOJSON_FILE = 'london_boroughs.json'
+            # Read current geojson file into a GeoDataFrame from gpd
+            bor = gpd.read_file(CURRENT_GEOJSON_FILE)
+            bor.insert(loc=1, column='color', value=0)
+
+            for i in range(len(bor.index)):
+                bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
+                # print(bor.name[i], borough)
+                # if bor.name[i] == borough:
+                #     bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
+                # else:
+                #     bor.color[i] = "000000"
+        return bor.to_json()
 
 class Boroughs(models.Model):
     code = models.IntegerField()
