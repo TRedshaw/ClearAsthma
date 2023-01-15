@@ -58,11 +58,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
     login_url = '/clear/login/'
     def get(self, request):
         user = get_object_or_404(AppUser, id = request.user.id)
-        print("user",user)
-        inhalers = UserInhaler.objects.filter(user_id = request.user.id)
-        for inhaler in inhalers:
-            print(inhaler)
-
+        inhalers = UserInhaler.objects.filter(user_id = user.id)
         user_form = self.user_form(instance = user)
         return render(request, self.template_name, context= {"form":user_form,"inhalers":inhalers})
 
