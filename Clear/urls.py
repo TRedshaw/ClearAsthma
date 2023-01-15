@@ -28,9 +28,12 @@ urlpatterns = [
 
     path('inhalers/', views.UserInhalerView.as_view(), name='inhalers'),
     path('inhaler/log_puff/<int:user_inhaler_id>', views.logInhalerPuff, name='inhaler_log_puff'),
+    path('pollution_levels/update/', views.updatePollutionLevels, name='update_pollution_levels'),
     path('pollution/', views.PollutionView.as_view(), name='pollution'),
 
     # TODO FIX
+    path('getboroughdata/', views.BoroughView, name='getboroughdata'),
+
     path('pollution/set_current_location/<int:borough_id>', views.logCurrentLocation, name='pollution_log_location'),
     path('settings/', views.SettingsView.as_view(), name='settings'),
     path('add_inhaler/', views.add_inhaler, name='add_inhaler'),

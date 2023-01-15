@@ -106,7 +106,8 @@ class UserInhaler(models.Model):
         pass
 
     # To log an inhaler usage.
-    def log_puff(user_inhaler_id):
+    @classmethod
+    def log_puff(cls, user_inhaler_id):
         # Get the record where the user_inhaler_id matches that of the one on the site
         user_inhaler = UserInhaler.objects.get(pk=user_inhaler_id)
         # Only allow a puff to be logged if they have puffs remaining
@@ -181,71 +182,88 @@ class PollutionLevels(models.Model):
         return_string = "Level " + str(self.pollution_level) + "@" + str(self.borough_id)
         return return_string
 
-    def update_pollution_levels(self, location):   
-        url = ''
-        url += 'https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/GroupName='
-        borough = location
-        url += location
+    def update_pollution_levels():   
+        url = 'https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/GroupName=London/Json'
         response = requests.get(url)
-        root = ET.fromstring(response.content)
-                
-        total=0
-        number=0
-        properties_dict = {}
-        pollutiontypes={}
-        objects=[]
+        data = response.json()
+        #initialise all values to 0 
+        for local_authority in data['HourlyAirQualityIndex']['LocalAuthority']:
 
-        for child in root.iter('*'):
-            if child.tag == 'Species':
-                pollutiontypes[child.attrib['SpeciesCode']]=child.attrib['AirQualityIndex']
-                total += int(child.attrib['AirQualityIndex'])
-                number += 1
+            borough_pollution_max = 0
+            borough_pollution_count = 0
+            borough_pollution_sum = 0
+            borough_pollution_average = 0
 
-        obj=PollutionLevels()
-        for key in pollutiontypes:
-            speciesname='pollution_level'+key.lower()
-            obj.speciesname = pollutiontypes[key]
-        obj.pollution_level = total/number
-        obj.current_flag = True
+            pollution_readings = {
+                'SO2': {'sum': 0, 'count': 0, 'average': 0},
+                'NO2': {'sum': 0, 'count': 0, 'average': 0},
+                'O3': {'sum': 0, 'count': 0, 'average': 0},
+                'PM250': {'sum': 0, 'count': 0, 'average': 0},
+                'PM10': {'sum': 0, 'count': 0, 'average': 0},
+                'PM25': {'sum': 0, 'count': 0, 'average': 0}
+            }
 
-        import sqlite3
+            try:
+                borough = Boroughs.objects.filter(code=local_authority['@LocalAuthorityCode']).first()
 
-        # Create a SQL connection to our SQLite database
-        con = sqlite3.connect("db.sqlite3")
-        cur = con.cursor()
-
-        # Return all results of query
-        cur.execute('SELECT code FROM Clear_boroughs WHERE ApiName=location')
-        obj.borough_id=cur.fetchall()
-        # Be sure to close the connection
-        cur.execute('SELECT OutwardName FROM Clear_boroughs WHERE ApiName=location')
-        location_full_name=cur.fetchall()
-        con.close()
-
-        objects.append(obj)
-        PollutionLevels.bulk_create(objects)
-
-
-        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
-        UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
+                CURRENT_GEOJSON_FILE = 'london_boroughs.json'
                 # Read current geojson file into a GeoDataFrame from gpd
-        boroughs = gpd.read_file(CURRENT_GEOJSON_FILE)
-                # Add a new columns for features like color or pollution level
-        boroughs.insert(loc=1,column='obj.pollution_level',value=0)
-        boroughs.insert(loc=2,column='fill',value=0)
+                bor = gpd.read_file(CURRENT_GEOJSON_FILE)
+                bor.insert(loc=1,column='color',value=0)
+                
+                for site in local_authority['Site']:
+                    site_pollutions_level = 0
+                    try:
+                        for species in site['Species']:
+                            species_code = species['@SpeciesCode']
+                            pollution_level = int(species['@AirQualityIndex'])
+                            pollution_readings[species_code]['sum'] += pollution_level
+                            pollution_readings[species_code]['count'] += 1
+                            pollution_readings[species_code]['average'] = pollution_readings[species_code]['sum'] / pollution_readings[species_code]['count']
 
-                # Fill those newly created columns
-        for i in range(len(boroughs.index)):
-            if boroughs.name[i] == location_full_name:
-                boroughs.overall_pollution_level[i]= obj.pollution_level
-                boroughs.fill[i] = "#%06x" % random.randint(0, 0xFFFFFF)
-            else:
-                boroughs.obj.pollution_level[i]= 0
-                boroughs.fill[i] = "000000"
-        # Write back updated GeoDataFrame to geojson file
-        boroughs.to_file(UPDATED_GEOJSON_FILE, driver="GeoJSON")
-        pass
+                            if pollution_level > borough_pollution_max:
+                                borough_pollution_max = pollution_level
 
+                            borough_pollution_sum += pollution_level
+                            borough_pollution_count += 1
+
+                            # Average will include 0 value results from sitees but we don't assume that
+                            # if there's no entry for a Site, that the value would be 0
+                            # So readings of 0 affect the average, missing values don't
+                            borough_pollution_average = round(borough_pollution_sum/borough_pollution_count)
+                            # Debugging the average calculation
+                            # print(borough.id, borough.OutwardName, borough_pollution_sum, borough_pollution_count, borough_pollution_max, borough_pollution_average, pollution_level)
+
+                    # Some objects have Species as a string
+                    except TypeError:
+                        pass
+
+                if borough != None:
+                    for i in range(len(bor.index)):
+                        bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
+                        print(bor.name[i],borough)
+                        # if bor.name[i] == borough:
+                        #     bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
+                        # else:
+                        #     bor.color[i] = "000000"
+                    PollutionLevels.objects.filter(borough_id=borough.id).update(current_flag=0)
+
+                    PollutionLevels.objects.create(
+                        pollution_level=borough_pollution_average,
+                        pollution_level_no2=pollution_readings['NO2']['average'],
+                        pollution_level_so2=pollution_readings['SO2']['average'],
+                        pollution_level_o3=pollution_readings['O3']['average'],
+                        # Data doesn't have PM250
+                        pollution_level_pm25=pollution_readings['PM250']['average'],
+                        pollution_level_pm10=pollution_readings['PM10']['average'],
+                        pollution_level_pm2_5=pollution_readings['PM25']['average'],
+                        borough_id=borough.id,
+                        current_flag = 1,
+                        pollution_date=datetime.date.today()
+                    )
+            except KeyError:
+                pass
+            return bor.to_json()
 
 class Boroughs(models.Model):
     code = models.IntegerField()
@@ -259,5 +277,3 @@ class Boroughs(models.Model):
 
     def __str__(self):
         return self.OutwardName
-
-

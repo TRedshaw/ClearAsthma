@@ -46,29 +46,24 @@
             </div>
         </div>
 
-        {% load static %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script>
-            {#dictionary={};#}
-            {#var gpd = require('geopandas');#}
-            {#boroughs= gpd.read_file(UPDATED_GEOJSON_FILE);#}
-            {#for (i in range(len(boroughs.index))) {#}
-            {#    dictionary{borughs.name[i]}={boroughs.fill[i]};#}
-            {##}
-
-            mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw';
+            $.get("{% url 'getboroughdata' %}", function(data) {
+                mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw';
                 var map = new mapboxgl.Map({
                     container: 'map',
                     style: 'mapbox://styles/mapbox/streets-v10',
                     center: [-0.163611, 51.500610], // starting position [lng, lat]
-                    zoom: 11 // starting zoom
+                    zoom: 10 // starting zoom
                 });
 
-                map.on('load', (event)  => {
+                map.on('load', () => {
                     // Add a data source containing GeoJSON data.
                     map.addSource('maine', {
                         'type': 'geojson',
-                        'data': '{% static 'london_boroughs.json' %}'
+                        'data': data
                     });
+
 
                     // Add a new layer to visualize the polygon.
                     map.addLayer({
@@ -77,9 +72,9 @@
                         'source': 'maine', // reference the data source
                         'layout': {},
                         'paint': {
-                            'fill-color': 'event.features[0].properties.fill',
+                            'fill-color': ['get', 'color'],
                             'fill-opacity': 0.5
-                    }
+                        }
                     });
                     // Add a black outline around the polygon.
                     map.addLayer({
@@ -88,11 +83,12 @@
                         'source': 'maine',
                         'layout': {},
                         'paint': {
-                        'line-color': '#000',
-                        'line-width': 3
-                    }
+                            'line-color': '#000',
+                            'line-width': 3
+                        }
                     });
-                    });
+                });
+            });
         </script>
     <body>
 {% endblock content %}

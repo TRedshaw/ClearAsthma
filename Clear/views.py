@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from ClearWeb.settings import AUTH_USER_MODEL
-
+import json
 
 # Create view for register page
 class RegisterView(CreateView):
@@ -106,6 +106,10 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             messages.error(request, 'Please fill in all required fields')
             return redirect('settings')
 
+def BoroughView(request):
+    data = PollutionLevels.update_pollution_levels()
+    json_data = json.loads(data)
+    return JsonResponse(json_data)
 
 def getIDfromInhalerType(inhaler_type):
     inhaler_name = ""
@@ -181,4 +185,10 @@ def logCurrentLocation(request, borough_id):
     current_user = request.user
     AppUser.set_new_current_borough(current_user, borough_id)
     return redirect(reverse_lazy('pollution'))
+
+def updatePollutionLevels(request):
+    PollutionLevels.update_pollution_levels()
+    return HttpResponse("OK")
+
+
 
