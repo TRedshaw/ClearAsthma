@@ -1,1 +1,1 @@
-web: gunicorn ClearWeb.wsgi
+web: gunicorn ClearAsthma.wsgi
