@@ -47,7 +47,7 @@ class PollutionView(LoginRequiredMixin, TemplateView):
         context['current_borough_levels'] = PollutionLevels.objects.get(id=current_user.current_borough_id)
         context['home_borough_levels'] = PollutionLevels.objects.get(id=current_user.home_borough_id)
         context['work_borough_levels'] = PollutionLevels.objects.get(id=current_user.work_borough_id)
-        context['oother_borough_levels'] = PollutionLevels.objects.get(id=current_user.other_borough_id)
+        context['other_borough_levels'] = PollutionLevels.objects.get(id=current_user.other_borough_id)
         return context
 
 # TODO @Anna -  Finish the code for this view section - need to change the tempalte view
@@ -132,7 +132,6 @@ def logInhalerPuff(request, user_inhaler_id):
     return redirect("inhalers")
 
 
-# TODO FIX
 def logCurrentLocation(request, borough_id):
     current_user = request.user
     AppUser.set_new_current_borough(current_user, borough_id)
