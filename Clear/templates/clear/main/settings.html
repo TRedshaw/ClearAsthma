@@ -12,12 +12,15 @@
 {% block nav_item_settings %}active{% endblock nav_item_settings %}
 {% block content %}
     <title text-center>Settings Design</title>
-	<div class="container pt-3 pb-5">
+	<div class="container">
+           <div class="row justify-content-center">
+               <h1 class="page-title display-4">SETTINGS</h1>
+           </div>
+
 
 		<form method="post" class="form-signin">
 		{% csrf_token %}
 
-		<h1 class="h3 font-weight-normal mb-3 text-center ">Settings</h1>
 		{% if messages %}
 		{% for message in messages %}
 		    <div class="alert alert-{{ message.tags }} col-12">{{message}}</div>
@@ -27,33 +30,38 @@
 			<div class="row">
 				<div class="col-lg-6">
 					<div class="form-group">
-						<label for="username"  class="">Username:</label>
+						<label for="username"  class="">Username</label>
 						{{form.username}}
 					</div>
 					<div class="form-group">
-						<label for="first_name" class="">First Name:</label>
+						<label for="first_name" class="">First Name</label>
 						{{form.first_name}}
 					</div>
 					<div class="form-group">
-						<label for="Surname" class="">Surname:</label>
+						<label for="Surname" class="">Surname</label>
 						{{form.last_name}}
 					</div>
 					<div class="form-group">
-						<label for="Surname" class="">Pollution Limit:</label>
+						<label for="Surname" class="">Pollution Limit</label>
 						{{form.pollution_limit}}
 					</div>
 					<div class="form-group">
-						<label for="home_borough_id" class="">Home Borough:</label>
+						<label for="home_borough_id" class="">Home Borough</label>
 						{{form.home_borough}}
 					</div>
 					<div class="form-group">
-						<label for="Work_borough_id" class="">Work Borough:</label>
+						<label for="Work_borough_id" class="">Work Borough</label>
 						{{form.work_borough}}
 					</div>
 					<div class="form-group">
-						<label for="other_borough_id" class="">Other Borough:</label>
+						<label for="other_borough_id" class="">Other Borough</label>
 						{{form.other_borough}}
 					</div>
+                    <div class="d-flex justify-content-end mt-3" >
+	        			<button class="btn btn-lg btn-primary" type="submit">
+			        		<i class="fa-solid fa-floppy-disk mr-3"></i>Save</button>
+			        </div>
+
 				</div>
                 <div class="col-lg-6">
 					{% if inhalers %}
@@ -124,10 +132,6 @@
 			    </div>
 		    </div>
 
-			<div class="d-flex justify-content-end mt-3" >
-				<button class="btn btn-lg btn-primary" type="submit">
-					<i class="fa-solid fa-floppy-disk mr-3"></i>Save</button>
-			</div>
 		</form>
     </div>
 
