@@ -38,7 +38,7 @@
                     {# Button for logging puff #}
                     <form enctype="multipart/form-data" method="post" action="/inhaler/log_puff/{{UserInhaler.id}}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Log Puff</button>
+                        <button type="submit" class="btn btn-danger">Log Puff</button>
                     </form>
                 </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             {# Display the name of the inhaler #}
-                            Inhaler: {{UserInhaler.get_readable_type}}
+                            Inhaler: {{UserInhaler.inhaler.name}}
                         </div>
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
