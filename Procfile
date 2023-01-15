@@ -1,1 +1,1 @@
-web: gunicorn ClearAsthma.wsgi --log-file -
+web: gunicorn ClearWeb.wsgi:application --log-file - --log-level debug
