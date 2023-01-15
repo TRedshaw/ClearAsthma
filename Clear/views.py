@@ -15,6 +15,8 @@ from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from ClearWeb.settings import AUTH_USER_MODEL
+from django.contrib.auth import get_user_model
+
 import json
 
 # Create your views here.
@@ -45,6 +47,8 @@ class PollutionView(LoginRequiredMixin, TemplateView):
         current_user = self.request.user
         context = super().get_context_data(**kwargs)
         context['borough_choices'] = Boroughs.objects.all()
+        context['user_boroughs'] = get_user_model().objects.select_related("current_borough","home_borough","work_borough","other_borough").get(pk=current_user.id)
+
         context['current_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.current_borough_id).first()
         context['home_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.home_borough_id).first()
         context['work_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.work_borough_id).first()
