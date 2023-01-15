@@ -182,7 +182,8 @@ class PollutionLevels(models.Model):
         return_string = "Level " + str(self.pollution_level) + "@" + str(self.borough_id)
         return return_string
 
-    def update_pollution_levels():   
+    @classmethod
+    def update_pollution_levels(cls):
         url = 'https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/GroupName=London/Json'
         response = requests.get(url)
         data = response.json()
