@@ -226,7 +226,7 @@ class PollutionLevels(models.Model):
         PollutionLevels.bulk_create(objects)
 
 
-        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
+        CURRENT_GEOJSON_FILE = 'london_boroughs.geojson'
         UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
                 # Read current geojson file into a GeoDataFrame from gpd
         boroughs = gpd.read_file(CURRENT_GEOJSON_FILE)

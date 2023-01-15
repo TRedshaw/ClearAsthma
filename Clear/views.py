@@ -41,15 +41,15 @@ class PollutionView(LoginRequiredMixin, TemplateView):
     template_name = 'clear/main/pollution.html'
     login_url = '/clear/login/'
 
-    def get_context_data(self, request, **kwargs):
-        current_user = request.user
-        context = super().get_context_data(**kwargs)
-        context['borough_choices'] = Boroughs.objects.all()
-        context['current_borough_levels'] = PollutionLevels.objects.get(id=current_user.current_borough_id)
-        context['home_borough_levels'] = PollutionLevels.objects.get(id=current_user.home_borough_id)
-        context['work_borough_levels'] = PollutionLevels.objects.get(id=current_user.work_borough_id)
-        context['other_borough_levels'] = PollutionLevels.objects.get(id=current_user.other_borough_id)
-        return context
+    # def get_context_data(self, request, **kwargs):
+    #     current_user = request.user
+    #     context = super().get_context_data(**kwargs)
+    #     context['borough_choices'] = Boroughs.objects.all()
+    #     context['current_borough_levels'] = PollutionLevels.objects.get(id=current_user.current_borough_id)
+    #     context['home_borough_levels'] = PollutionLevels.objects.get(id=current_user.home_borough_id)
+    #     context['work_borough_levels'] = PollutionLevels.objects.get(id=current_user.work_borough_id)
+    #     context['other_borough_levels'] = PollutionLevels.objects.get(id=current_user.other_borough_id)
+    #     return context
 
 # TODO @Anna -  Finish the code for this view section - need to change the tempalte view
 class SettingsView(LoginRequiredMixin, UpdateView):

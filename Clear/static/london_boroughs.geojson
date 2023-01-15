@@ -10,7 +10,7 @@
         "code": "E09000021",
         "area_hectares": 3726.117,
         "inner_statistical": false,
-        "fill": "#851313"
+        "color": "#050"
       },
       "geometry": {
         "type": "MultiPolygon",
