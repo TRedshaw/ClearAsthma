@@ -30,7 +30,7 @@ class RegisterView(CreateView):
 # Create view for inhaler log page
 class UserInhalerView(LoginRequiredMixin, ListView):
 
-    ]# Filter the UserInhaler model to only the logged in user's inhalers
+    # Filter the UserInhaler model to only the logged in user's inhalers
     def get_queryset(self):
         qs = UserInhaler.objects.filter(user_id=self.request.user.id)
         return qs
