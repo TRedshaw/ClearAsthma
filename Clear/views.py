@@ -41,14 +41,14 @@ class PollutionView(LoginRequiredMixin, TemplateView):
     template_name = 'clear/main/pollution.html'
     login_url = '/clear/login/'
 
-    def get_context_data(self, request, **kwargs):
-        current_user = request.user
+    def get_context_data(self, **kwargs):
+        current_user = self.request.user
         context = super().get_context_data(**kwargs)
         context['borough_choices'] = Boroughs.objects.all()
-        context['current_borough_levels'] = PollutionLevels.objects.get(id=current_user.current_borough_id)
-        context['home_borough_levels'] = PollutionLevels.objects.get(id=current_user.home_borough_id)
-        context['work_borough_levels'] = PollutionLevels.objects.get(id=current_user.work_borough_id)
-        context['other_borough_levels'] = PollutionLevels.objects.get(id=current_user.other_borough_id)
+        context['current_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.current_borough_id).first()
+        context['home_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.home_borough_id).first()
+        context['work_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.work_borough_id).first()
+        context['other_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.other_borough_id).first()
         return context
 
     def update_all_pollution_levels(self):
