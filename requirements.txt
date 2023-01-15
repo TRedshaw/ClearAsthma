@@ -1,7 +1,4 @@
 alabaster==0.7.12
-anaconda-client==1.7.2
-anaconda-navigator==1.10.0
-anaconda-project==0.8.3
 applaunchservices==0.2.1
 appnope==0.1.0
 appscript==1.1.1
@@ -36,12 +33,7 @@ click==7.1.2
 click-plugins==1.1.1
 cligj==0.7.2
 cloudpickle==1.6.0
-clyent==1.2.2
 colorama==0.4.4
-conda==4.9.2
-conda-build==3.20.5
-conda-package-handling==1.7.2
-conda-verify==3.4.2
 contextlib2==0.6.0.post1
 cryptography==3.1.1
 cycler==0.10.0
@@ -110,7 +102,6 @@ matplotlib==3.3.2
 mccabe==0.6.1
 mistune==0.8.4
 mkl-fft==1.2.0
-mkl-random==1.1.1
 mkl-service==2.3.0
 mock==4.0.2
 more-itertools==8.6.0
@@ -118,7 +109,6 @@ mpmath==1.1.0
 msgpack==1.0.0
 multipledispatch==0.6.0
 munch==2.5.0
-navigator-updater==0.2.1
 nbclient==0.5.1
 nbconvert==6.0.7
 nbformat==5.0.8
@@ -163,13 +153,11 @@ pydocstyle==5.1.1
 pyflakes==2.2.0
 Pygments==2.7.2
 pylint==2.6.0
-pyodbc==4.0.0-unsupported
 pyOpenSSL==19.1.0
 pyparsing==2.4.7
 pyproj==3.4.1
 pyrsistent==0.17.3
 PySocks==1.7.1
-pytest==0.0.0
 python-dateutil==2.8.1
 python-jsonrpc-server==0.4.0
 python-language-server==0.35.1
@@ -191,7 +179,6 @@ scikit-learn==0.23.2
 scipy==1.5.2
 seaborn==0.11.0
 Send2Trash==1.5.0
-setuptools==50.3.1.post20201107
 shapely==2.0.0
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
