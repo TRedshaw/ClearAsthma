@@ -28,6 +28,25 @@
                         <h2 class="display-4" >Map of London</h2>
                     </div>
                     <div id='map' width="100%" style='height:600px'></div>
+                    <div class="card mt-2">
+                        <div class="card-header"><h5>Best Places to Live (All Time)</h5></div>
+                        <div class="card-body">
+                            <ol>
+                                {% for b in top5_boroughs %}<li>{{ b.OutwardName }} ({{ b.average_pollution }})</li>{% endfor %}
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="card mt-2">
+                        <div class="card-header"><h5>Boroughs with Current Worst Pollution</h5></div>
+                        <div class="card-body">
+                            <ol>
+                                {% for b in current_worst5_boroughs %}<li>{{ b.borough.OutwardName }} ({{ b.pollution_level }})</li>{% endfor %}
+                            </ol>
+                        </div>
+                    </div>
+
+
+
                 </div>
 
                 <!--Column two for pollution warnings in current location-->

@@ -16,6 +16,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from ClearWeb.settings import AUTH_USER_MODEL
 from django.contrib.auth import get_user_model
+from django.db.models import Q, Avg, Count
 
 import json
 
@@ -48,7 +49,11 @@ class PollutionView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['borough_choices'] = Boroughs.objects.all()
         context['user_boroughs'] = get_user_model().objects.select_related("current_borough","home_borough","work_borough","other_borough").get(pk=current_user.id)
+        context['top5_boroughs'] = Boroughs.objects.filter(borough_pollution__isnull = False).annotate(average_pollution=Avg('borough_pollution__pollution_level')).order_by('average_pollution')[:5]
 
+
+        context['current_worst5_boroughs'] = PollutionLevels.objects.select_related("borough").filter(current_flag=1).order_by('-pollution_level')[:5]
+        print(context['top5_boroughs'])
         context['current_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.current_borough_id).first()
         context['home_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.home_borough_id).first()
         context['work_borough_levels'] = PollutionLevels.objects.filter(borough_id=current_user.work_borough_id).first()
