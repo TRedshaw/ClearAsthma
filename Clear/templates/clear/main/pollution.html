@@ -46,10 +46,10 @@
             </div>
         </div>
 
-        {% load static %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script>
-
-            mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw';
+            $.get("{% url 'getboroughdata' %}", function(data) {
+                mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw';
                 var map = new mapboxgl.Map({
                     container: 'map',
                     style: 'mapbox://styles/mapbox/streets-v10',
@@ -57,11 +57,11 @@
                     zoom: 10 // starting zoom
                 });
 
-                map.on('load', ()  => {
+                map.on('load', () => {
                     // Add a data source containing GeoJSON data.
                     map.addSource('maine', {
                         'type': 'geojson',
-                        'data': '{% static 'london_boroughs.geojson' %}'
+                        'data': data
                     });
 
 
@@ -74,7 +74,7 @@
                         'paint': {
                             'fill-color': ['get', 'color'],
                             'fill-opacity': 0.5
-                    }
+                        }
                     });
                     // Add a black outline around the polygon.
                     map.addLayer({
@@ -83,11 +83,12 @@
                         'source': 'maine',
                         'layout': {},
                         'paint': {
-                        'line-color': '#000',
-                        'line-width': 3
-                    }
+                            'line-color': '#000',
+                            'line-width': 3
+                        }
                     });
-                    });
+                });
+            });
         </script>
     <body>
 {% endblock content %}
