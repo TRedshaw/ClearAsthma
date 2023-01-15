@@ -10,7 +10,7 @@ from django.views.generic import View
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -102,7 +102,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             return redirect('settings')
 
 def BoroughView(request):
-    data = PollutionLevels.update_pollution_levels()
+    data = PollutionLevels.get_borough_map()
     json_data = json.loads(data)
     return JsonResponse(json_data)
 
@@ -184,6 +184,5 @@ def logCurrentLocation(request, borough_id):
 def updatePollutionLevels(request):
     PollutionLevels.update_pollution_levels()
     return HttpResponse("OK")
-
 
 
