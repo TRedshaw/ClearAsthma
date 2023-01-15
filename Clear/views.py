@@ -184,3 +184,9 @@ def logCurrentLocation(request, borough_id):
     AppUser.set_new_current_borough(current_user, borough_id)
     return redirect(reverse_lazy('pollution'))
 
+def updatePollutionLevels(request):
+    PollutionLevels.update_pollution_levels()
+    return HttpResponse("OK")
+
+
+
