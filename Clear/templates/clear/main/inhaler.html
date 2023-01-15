@@ -36,7 +36,7 @@
                     </div>
                 <div class="card-footer">
                     {# Button for logging puff #}
-                    <form enctype="multipart/form-data" method="post" action="/clear/inhaler/log_puff/{{UserInhaler.id}}">
+                    <form enctype="multipart/form-data" method="post" action="/inhaler/log_puff/{{UserInhaler.id}}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary">Log Puff</button>
                     </form>
