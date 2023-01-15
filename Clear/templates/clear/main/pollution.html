@@ -33,7 +33,7 @@
                 <!--Column two for pollution warnings in current location-->
                 <div class="col-4 test1">
                     <div class="row justify-content-center">
-                        <h2 class="display-4" >Warnings</h2>
+                        <h2 class="display-4" >Current Levels</h2>
                     </div>
 
                     <!--Dropdown button to set current location-->
@@ -53,7 +53,8 @@
 
                     <div class="card mt-2">
                         <div class="card-header">
-                            <h5>{{ user_boroughs.current_borough.OutwardName }} (Current Location)</h5>
+                            <h5 class="mb-0">{{ user_boroughs.current_borough.OutwardName }}{% if current_borough_levels.pollution_level >= user.pollution_limit %} &nbsp;<i title="This level is above your pollution limit" class="fa-solid fa-triangle-exclamation text-danger"></i> {% endif %}</h5>
+                        {% if current_borough_levels.pollution_level >= user.pollution_limit %}<p class="small text-danger mb-0">Warning: Above limit</p>{% endif %}
                         </div>
                         <div class="card-body">
                             <table class="table table-sm table-striped table-borderless">
@@ -70,7 +71,8 @@
                     </div>
                     <div class="card mt-2">
                         <div class="card-header">
-                            <h5>{{ user_boroughs.home_borough.OutwardName }} (Home)</h5>
+                            <h5 class="mb-0">{{ user_boroughs.home_borough.OutwardName }}&nbsp;(Home){% if home_borough_levels.pollution_level >= user.pollution_limit %} &nbsp;<i title="This level is above your pollution limit" class="fa-solid fa-triangle-exclamation text-danger"></i> {% endif %}</h5>
+                        {% if home_borough_levels.pollution_level >= user.pollution_limit %}<p class="small text-danger mb-0">Warning: Above limit</p>{% endif %}
                         </div>
                         <div class="card-body">
                             <table class="table table-sm table-striped table-borderless">
@@ -87,7 +89,8 @@
                     </div>
                     <div class="card mt-2">
                         <div class="card-header">
-                            <h5>{{ user_boroughs.work_borough.OutwardName }} (Work)</h5>
+                            <h5 class="mb-0">{{ user_boroughs.work_borough.OutwardName }}&nbsp;(Work){% if work_borough_levels.pollution_level >= user.pollution_limit %} &nbsp;<i title="This level is above your pollution limit" class="fa-solid fa-triangle-exclamation text-danger"></i> {% endif %}</h5>
+                        {% if work_borough_levels.pollution_level >= user.pollution_limit %}<p class="small text-danger mb-0">Warning: Above limit</p>{% endif %}
                         </div>
                         <div class="card-body">
                             <table class="table table-sm table-striped table-borderless">
@@ -104,7 +107,8 @@
                     </div>
                     <div class="card mt-2">
                         <div class="card-header">
-                            <h5>{{ user_boroughs.other_borough.OutwardName }} (Other)</h5>
+                            <h5 class="mb-0">{{ user_boroughs.other_borough.OutwardName }} (Other){% if other_borough_levels.pollution_level >= user.pollution_limit %} &nbsp;<i title="This level is above your pollution limit" class="fa-solid fa-triangle-exclamation text-danger"></i> {% endif %}</h5>
+                        {% if other_borough_levels.pollution_level >= user.pollution_limit %}<p class="small text-danger mb-0">Warning: Above limit</p>{% endif %}
                         </div>
                         <div class="card-body">
                             <table class="table table-sm table-striped table-borderless">
