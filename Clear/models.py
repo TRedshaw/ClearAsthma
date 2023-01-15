@@ -106,7 +106,8 @@ class UserInhaler(models.Model):
         pass
 
     # To log an inhaler usage.
-    def log_puff(user_inhaler_id):
+    @classmethod
+    def log_puff(cls, user_inhaler_id):
         # Get the record where the user_inhaler_id matches that of the one on the site
         user_inhaler = UserInhaler.objects.get(pk=user_inhaler_id)
         # Only allow a puff to be logged if they have puffs remaining
