@@ -5,6 +5,7 @@
 
 <!--Main block-->
 {% block content %}
+    <!--Reference 1 - using documentation and examples from Mapbox https://docs.mapbox.com/mapbox-gl-js/example/simple-map/ -->
 
     <head>
         <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
@@ -130,6 +131,7 @@
         <!--Import jQuery & CDN-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script>
+            // Reference 2 - another example from Mapbox https://docs.mapbox.com/mapbox-gl-js/example/setstyle/
 
             $.get("{% url 'getboroughdata' %}", function(data) {   // access data from urls.py-->
                 mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fzc3lkbzAyIiwiYSI6ImNsY2R1dXYwbTRtMWczd21uMWM2ZGtxd24ifQ.NhYgnpmMpFsO_mtwOmzYsw'; <!--Mapbox token to access the map-->
