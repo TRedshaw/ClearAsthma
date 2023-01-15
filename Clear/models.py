@@ -106,7 +106,8 @@ class UserInhaler(models.Model):
         pass
 
     # To log an inhaler usage.
-    def log_puff(user_inhaler_id):
+    @classmethod
+    def log_puff(cls, user_inhaler_id):
         # Get the record where the user_inhaler_id matches that of the one on the site
         user_inhaler = UserInhaler.objects.get(pk=user_inhaler_id)
         # Only allow a puff to be logged if they have puffs remaining
@@ -205,7 +206,11 @@ class PollutionLevels(models.Model):
             try:
                 borough = Boroughs.objects.filter(code=local_authority['@LocalAuthorityCode']).first()
 
-
+                CURRENT_GEOJSON_FILE = 'london_boroughs.json'
+                # Read current geojson file into a GeoDataFrame from gpd
+                bor = gpd.read_file(CURRENT_GEOJSON_FILE)
+                bor.insert(loc=2,column='color',value=0)
+                
                 for site in local_authority['Site']:
                     site_pollutions_level = 0
                     try:
@@ -234,6 +239,11 @@ class PollutionLevels(models.Model):
                         pass
 
                 if borough != None:
+                    for i in range(len(bor.index)):
+                        if bor.name[i] == borough:
+                        bor.color[i] = "#%06x" % random.randint(0, 0xFFFFFF)
+                    else:
+                        bor.color[i] = "000000"
                     PollutionLevels.objects.filter(borough_id=borough.id).update(current_flag=0)
 
                     PollutionLevels.objects.create(
@@ -251,28 +261,7 @@ class PollutionLevels(models.Model):
                     )
             except KeyError:
                 pass
-
-        '''
-        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
-        UPDATED_GEOJSON_FILE = 'updated_london_boroughs.json'
-                # Read current geojson file into a GeoDataFrame from gpd
-        boroughs = gpd.read_file(CURRENT_GEOJSON_FILE)
-                # Add a new columns for features like color or pollution level
-        boroughs.insert(loc=1,column='obj.pollution_level',value=0)
-        boroughs.insert(loc=2,column='fill',value=0)
-
-                # Fill those newly created columns
-        for i in range(len(boroughs.index)):
-            if boroughs.name[i] == location_full_name:
-                boroughs.overall_pollution_level[i]= obj.pollution_level
-                boroughs.fill[i] = "#%06x" % random.randint(0, 0xFFFFFF)
-            else:
-                boroughs.obj.pollution_level[i]= 0
-                boroughs.fill[i] = "000000"
-        # Write back updated GeoDataFrame to geojson file
-        boroughs.to_file(UPDATED_GEOJSON_FILE, driver="GeoJSON")
-        pass
-'''
+            return bor
 
 class Boroughs(models.Model):
     code = models.IntegerField()
@@ -286,5 +275,3 @@ class Boroughs(models.Model):
 
     def __str__(self):
         return self.OutwardName
-
-
