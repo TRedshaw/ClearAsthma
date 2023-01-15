@@ -67,10 +67,18 @@ class SettingsForm(forms.ModelForm):
     home_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
     work_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
     other_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
+    pollution_limit = forms.IntegerField(
+        widget=forms.TextInput(
+            attrs={'class': 'form-control',
+                   'type': 'text',
+                   'onfocus': "(this.type='number')",
+                   'placeholder': 'Pollution Limit',
+                   'min': 0,
+                   'max': 10}))
 
     class Meta:
         model = AppUser
-        fields=['username','first_name','last_name','home_borough','work_borough','other_borough']
+        fields=['username','first_name','last_name','home_borough','work_borough','other_borough','pollution_limit']
 
 # # TODO FIX
 # class CurrentLocationForm(forms.ModelForm):
