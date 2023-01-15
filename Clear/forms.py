@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.forms import UserCreationForm
 
-from Clear.models import AppUser
+from Clear.models import AppUser, Boroughs
 
 
 class LoginForm(auth_forms.AuthenticationForm):
@@ -64,13 +64,13 @@ class SettingsForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control form-control-sm', 'id': 'surname', 'placeholder': 'First Name'}))
     last_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control form-control-sm', 'id': 'surname', 'placeholder': 'Surname'}))
-    home_postcode = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control form-control-sm', 'id': 'home_postcode', 'placeholder': 'home Postcode'}))
-    work_postcode = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control form-control-sm', 'id': 'work_postcode', 'placeholder': 'Work Postcode'}))
-    other_postcode = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control form-control-sm', 'id': 'other_postcode', 'placeholder': 'Other Postcode'}))
+    home_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
+    work_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
+    other_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
 
     class Meta:
         model = AppUser
-        fields=['username','first_name','last_name','home_postcode','work_postcode','other_postcode']
+        fields=['username','first_name','last_name','home_borough','work_borough','other_borough']
 
 # # TODO FIX
 # class CurrentLocationForm(forms.ModelForm):

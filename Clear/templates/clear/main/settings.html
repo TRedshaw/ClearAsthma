@@ -23,31 +23,32 @@
 		    <div class="alert alert-{{ message.tags }} col-12">{{message}}</div>
 		{% endfor %}
 		{% endif %}
+
 			<div class="row">
 				<div class="col-lg-6">
-					<div class="form-group mb-0">
+					<div class="form-group">
 						<label for="username"  class="">Username:</label>
 						{{form.username}}
 					</div>
-					<div class="from-group">
+					<div class="form-group">
 						<label for="first_name" class="">First Name:</label>
 						{{form.first_name}}
 					</div>
-					<div class="from-group">
+					<div class="form-group">
 						<label for="Surname" class="">Surname:</label>
 						{{form.last_name}}
 					</div>
-					<div class="from-group">
-						<label for="home_postcode" class="">Home Postcode:</label>
-						{{form.home_postcode}}
+					<div class="form-group">
+						<label for="home_borough_id" class="">Home Borough:</label>
+						{{form.home_borough}}
 					</div>
-					<div class="from-group">
-						<label for="Work_postcode" class="">Work Postcode:</label>
-						{{form.work_postcode}}
+					<div class="form-group">
+						<label for="Work_borough_id" class="">Work Borough:</label>
+						{{form.work_borough}}
 					</div>
-					<div class="from-group">
-						<label for="other_postcode" class="">Other Postcode:</label>
-						{{form.other_postcode}}
+					<div class="form-group">
+						<label for="other_borough_id" class="">Other Borough:</label>
+						{{form.other_borough}}
 					</div>
 				</div>
                 <div class="col-lg-6">
@@ -106,6 +107,12 @@
 					</div>
 
 					{% endfor %}
+                    {% else %}
+                        <div class="card mb-3 " style="border-radius: 1em;">
+					    	<div class="card-body">
+                                You have no inhalers - click the button to add one
+                            </div>
+                        </div>
 					{% endif %}
 					<div class="d-flex justify-content-end mt-3" >
 						<button class="btn btn-sm btn-primary" type="button" data-toggle="modal" data-target="#exampleModalCenter">Add Inhaler</button>
