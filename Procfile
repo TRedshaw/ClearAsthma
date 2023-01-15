@@ -1,1 +1,1 @@
-web: gunicorn ClearWeb/ClearWeb.wsgi --log-file -
+web: gunicorn ClearWeb.wsgi
