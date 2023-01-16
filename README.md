@@ -1,34 +1,40 @@
-15th January 2023
-How to locally use Clear:
-    - Clone the GitHub Repository locally in your prefered editor by creating a 'New Project from VCS' or quivalent
-    - Open Terminal either in the editor, or on your computer and navigate to your current working directory
-        - Run 'py manage.py migrate'
-        - Run 'py -m venv env' - if propmted to chose this as an environment, select yes - this ensure everything you install is uptodate and contained to this project folder only
-        - Navigate to the 'Scripts' folder inside the venv, and run ' .\activate'
-        - Navigate back out to the ClearAsthma folder
-        - Install the following modules using 'pip install #insert module here#'
-            modules:
-            - requests
-            - django
-            - geopandas
-            - json
-            - xml.etree.ElementTree
-        - Now you are ready to run the code! In Terminal still, you can run 'py manage.py runserver'
-        - Click the link the terminal displays, and add '/clear/pollution' at the end to access the pollution page for example
+# 15th January 2023
+
+## How to Use Features of our Website
+- Navigate to https://clear-asthma.herokuapp.com
+- Once registered and logged in, navigate to the settings page
+- Add inhalers, personal details, and key locations eg Home, Work
+- Save
+- Use the Inhalers Log page to log inhaler use and monitor your inhalers
+- Use the Pollution Information page to view a pollution map and pollution levels at your locations, as well as to see pollution warnings and best / worst boroughs
+
+
+## How to Locally Use Clear
+- Clone the GitHub Repository locally in your preferred editor
+- Open Terminal either in the editor, or on your computer and navigate to your current working directory (these instructions assume you already have Python 3 installed and configured)
+    - Run 'python manage.py migrate'
+    - Install the required modules using 'pip install -r requirements.txt
+    - Now you are ready to run the code! In Terminal still, you can run 'python manage.py runserver'
+    - Click the link the terminal displays to access the pollution page for example
 
 
 
-CODE USED TO SETUP THE PROJECT FRAMEWORK: 
+CODE AND HELP USED DURING THE PROJECT: 
 Bootstrap Versions Documentation: https://getbootstrap.com/docs/versions/
 
 Django Documentation: https://docs.djangoproject.com/en/4.1/
 
-Bootstrap Components eg menu bar / button: https://getbootstrap.com/docs/4.0/components/alerts/
+Bootstrap Documentation: https://getbootstrap.com/docs/4.0/
 
-Fonts: https://fontawesome.com
+Fonts and Icons: https://fontawesome.com
 
-Youtube Tutorials Series: https://www.youtube.com/watch?v=qDwdMDQ8oX4&list=PL-osiE80TeTtoQCKZ03TU5fNfx2UY6U4p&index=3
+Youtube Tutorial Series: https://www.youtube.com/watch?v=qDwdMDQ8oX4&list=PL-osiE80TeTtoQCKZ03TU5fNfx2UY6U4p&index=3
+
+Deployment Documentation: https://devcenter.heroku.com/categories/python-support
+
+Django for Beginners Book: 'Django for Beginners 4.0', William.S.Vincent, ISBN: 9781983172663
 
 Deployment Documentation: https://devcenter.heroku.com/categories/python-support
 
 All Pollution Data From: London Air Quality Index (AQI) and United Kingdom Air Pollution | IQAir. Available at: https://www.iqair.com/uk/england/london.
+
