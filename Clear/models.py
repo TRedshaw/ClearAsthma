@@ -277,15 +277,18 @@ class PollutionLevels(models.Model):
 
     @classmethod
     def get_borough_map(cls):
-        CURRENT_GEOJSON_FILE = 'london_boroughs.json'
-        # Read current geojson file into a GeoDataFrame from gpd
-        bor = gpd.read_file(CURRENT_GEOJSON_FILE)
-        bor1=bor.copy()
-        bor1.insert(loc=1, column='color', value=000000)
+        CURRENT_GEOJSON_FILE = 'london_boroughs.json' #Load the geojspn file
+        bor = gpd.read_file(CURRENT_GEOJSON_FILE) # Read current geojson file into a GeoDataFrame from gpd
+        bor1=bor.copy() #Save as a copy so we don't get pandas accessing and changing errors
+        
+        bor1.insert(loc=1, column='color', value=000000) #Insert empty color property in each borough in the file
         current_borough_id=int
+        #create a dictionary to access each pollution level's corresponding colour
         colours={0:'#000000', 1:'#27a139', 2:'#27a139', 3:'#27a139', 4:'#f2f21d', 5:'#f2f21d', 6:'#f2f21d', 7:'#e6331c', 8:'#e6331c', 9:'#e6331c', 10:'#ab1df2'}
+        #Loop through every borough in the file, find it's borough_id to find the overall pollution level from the database
         for i in range(len(bor1.index)):                    
             current_borough_obj=Boroughs.objects.filter(OutwardName=bor1.name[i]).first()
+            #handle NoneType Errors
             if current_borough_obj==None:
                 pass
             else:
@@ -296,7 +299,7 @@ class PollutionLevels(models.Model):
                     pass
                 else:
                     overall_pollution_level = overall_pollution_level_obj.pollution_level
-                    bor1.color[i] = colours[overall_pollution_level]
+                    bor1.color[i] = colours[overall_pollution_level] # assign the colour corresponding to the current pollution level for each borough we looped through
         return bor1.to_json()
 
 class Boroughs(models.Model):
