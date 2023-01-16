@@ -59,6 +59,8 @@ class RegisterForm(UserCreationForm):
             attrs={'class': 'form-check-input',
                    'type': 'checkbox'}))
 
+
+# SettingsForm allows the user to enter required data that is then sent to the server for processing
 class SettingsForm(forms.ModelForm):
     username = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control form-control-sm', 'id': 'username', 'placeholder': 'Username'}))
@@ -70,6 +72,7 @@ class SettingsForm(forms.ModelForm):
     home_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
     work_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
     other_borough = forms.ModelChoiceField(required=False,queryset=Boroughs.objects.all(), empty_label="None", widget=forms.Select(attrs={'class': 'form-control form-control-sm'}))
+    # Setting up pollution limit from the settings page
     pollution_limit = forms.IntegerField(
         widget=forms.TextInput(
             attrs={'class': 'form-control',
