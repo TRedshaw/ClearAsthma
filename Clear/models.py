@@ -22,10 +22,12 @@ class AppUser(AbstractUser):
     # PROTECTs the deletion of a UserProfile if a Borough is tried to be deleted
     current_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='current_users', null=True)
 
+    # Relate the User to their key Boroughs
     home_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='home_users', null=True)
     work_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='work_users', null=True)
     other_borough = models.ForeignKey('Boroughs', on_delete=models.PROTECT, related_name='other_users', null=True)
 
+    # Store the Pollution Limit for the User
     pollution_limit = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])
 
     # Consent to allowing us to store their medical information.
@@ -44,22 +46,19 @@ class AppUser(AbstractUser):
         return self.username
 
     def set_new_current_borough(current_user, borough_id):
+        # Get the user object where the ID matches that of the logged-in user
         app_user = AppUser.objects.get(pk=current_user.id)
+        # Get the borough where the ID matches that of the borough the user has selected
         borough = Boroughs.objects.get(id=borough_id)
+        # Set the current borough id field for the logged-in user to the id of the borough they have selected
         app_user.current_borough_id = borough.id
+        # Update the table
         app_user.save()
 
     def quick_set_current_location(self):
-        # TODO For when they choose just work or other or home it gives them the pollution level by clicking
-        #  button without having to enter their postcode
-
-        # eg. if work clicked, then take the work location id from the userLocations table and insert into the current
-        # location field in this table (for example)
         pass
 
-
     def add_location(self):
-        # TODO Create code to add a location
         pass
 
 
@@ -72,11 +71,14 @@ class UserInhaler(models.Model):
 
     # models.PROTECT works so if a user tries to delete an 'Inhaler' record (the one in quotations) then it wont let you
     # models.CASCADE will delete all related UserInhalers if a UserProfile (user) is deleted
-
+    # The setup of the fields for the user-inhaler relationship database
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_inhaler', null=False)
     inhaler = models.ForeignKey('Inhalers', on_delete=models.PROTECT, related_name='inhaler_user', null=False)
+    # Number of puffs used today
     puffs_today = models.IntegerField(default=0)
+    # Puffs remaining in the Inhaler
     puffs_remaining = models.IntegerField(null=False)
+    # Number of puffs prescribed each day
     puffs_per_day = models.IntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)  # attributes time
 
@@ -90,7 +92,6 @@ class UserInhaler(models.Model):
         return return_string
 
     def add_inhaler(self):
-        # TODO Complete
         pass
 
     # To reset puffs today to zero every day
@@ -100,9 +101,7 @@ class UserInhaler(models.Model):
             self.puffs_today = 0
             self.save()
 
-
     def delete_inhaler(self):
-        # TODO Complete
         pass
 
     # To log an inhaler usage.
@@ -158,8 +157,9 @@ class PollutionLevels(models.Model):
     """
     All boroughs' pollution levels are stored here, with each borough being related by a foreign key.
     """
-    # TODO will need to edit at a later date to accomodate for different pollutants
+    # Set fields for the borough ID (that is a foreign key relating to a borough in the Boroughs table)
     borough = models.ForeignKey('Boroughs', on_delete=models.CASCADE, related_name='borough_pollution', null=False)
+    # Create integer fields for all pollutant levels and an overall pollution level
     pollution_level = models.IntegerField(help_text="Overall Pollution Level")
     pollution_level_no2 = models.IntegerField(help_text="NO2 Pollution Level")
     pollution_level_o3 = models.IntegerField(help_text="O3 Pollution Level")
@@ -184,17 +184,21 @@ class PollutionLevels(models.Model):
 
     @classmethod
     def update_pollution_levels(cls):
+        # Retrieve the current pollution level from the AirQuality API
         url = 'https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/GroupName=London/Json'
         response = requests.get(url)
+        # Retrieve the response as JSON
         data = response.json()
-        #initialise all values to 0 
+        # Loop over the local authorities
         for local_authority in data['HourlyAirQualityIndex']['LocalAuthority']:
 
+            # Reset average statistics for the Borough
             borough_pollution_max = 0
             borough_pollution_count = 0
             borough_pollution_sum = 0
             borough_pollution_average = 0
 
+            # Create an empty dict for storing detailed levels for the Borough
             pollution_readings = {
                 'SO2': {'sum': 0, 'count': 0, 'average': 0},
                 'NO2': {'sum': 0, 'count': 0, 'average': 0},
@@ -205,38 +209,55 @@ class PollutionLevels(models.Model):
             }
 
             try:
+                # Retrieve the Borough matching the LocalAuthorityCode (we do this here so we can use the Borough in debugging)
                 borough = Boroughs.objects.filter(code=local_authority['@LocalAuthorityCode']).first()
 
+                # Loop over all the sensor locations (Sites) for a Borough
                 for site in local_authority['Site']:
                     site_pollutions_level = 0
                     try:
+                        # Loop over all the pollutant levels measured at the Site
                         for species in site['Species']:
+                            # Add the reading for this site / pollutant to the dict for that pollutant
+                            # This allows us to average the readings for the same pollutant across multiple
+                            # Sites within the same Borough
                             species_code = species['@SpeciesCode']
                             pollution_level = int(species['@AirQualityIndex'])
+                            # Add the pollution level at this site
                             pollution_readings[species_code]['sum'] += pollution_level
+                            # Increment the number of readings for this pollutant
                             pollution_readings[species_code]['count'] += 1
+                            # Calculate the average pollutant level for this pollutant
+                            # We do this here because it means we definitely have one reading
+                            # If we calculate the average at the end, there may be some pollutants with
+                            # 0 readings which will result in a division by 0 error
                             pollution_readings[species_code]['average'] = pollution_readings[species_code]['sum'] / pollution_readings[species_code]['count']
 
+                            # Keep track of the maximum pollution level of any pollutant for the borough (future use)
                             if pollution_level > borough_pollution_max:
                                 borough_pollution_max = pollution_level
 
+                            # Add the pollutant level to the total for the Borough
                             borough_pollution_sum += pollution_level
+                            # Increment the number of readings for the Borough
                             borough_pollution_count += 1
 
-                            # Average will include 0 value results from sitees but we don't assume that
+                            # Average will include 0 value results from sites but we don't assume that
                             # if there's no entry for a Site, that the value would be 0
                             # So readings of 0 affect the average, missing values don't
                             borough_pollution_average = round(borough_pollution_sum/borough_pollution_count)
                             # Debugging the average calculation
                             # print(borough.id, borough.OutwardName, borough_pollution_sum, borough_pollution_count, borough_pollution_max, borough_pollution_average, pollution_level)
 
-                    # Some objects have Species as a string
+                    # Some objects have Species as a string so we catch this error
                     except TypeError:
                         pass
 
+                # Make sure that we have this Borough in our database and update the PollutionLevels if we do
                 if borough != None:
+                    # Reset the "current" flag on all the existing PollutionLevels for this Borough
                     PollutionLevels.objects.filter(borough_id=borough.id).update(current_flag=0)
-
+                    # Add the new "current" PollutionLevel for this Borough
                     PollutionLevels.objects.create(
                         pollution_level=borough_pollution_average,
                         pollution_level_no2=pollution_readings['NO2']['average'],
@@ -250,6 +271,7 @@ class PollutionLevels(models.Model):
                         current_flag = 1,
                         pollution_date=datetime.date.today()
                     )
+            # Some Local Authorities have no monitoring Sites therefore there is no Site key - catch this error
             except KeyError:
                 pass
 

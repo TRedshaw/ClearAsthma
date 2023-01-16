@@ -17,6 +17,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# From the Heroku project - check if we are running on Heroku
+# @see https://github.com/heroku/python-getting-started/blob/main/gettingstarted/settings.py
 IS_HEROKU = "DYNO" in os.environ
 
 # Quick-start development settings - unsuitable for production
@@ -34,6 +36,7 @@ if not IS_HEROKU:
 
 ALLOWED_HOSTS = ['*']
 
+# Specify that we are using a custom user model
 AUTH_USER_MODEL = 'Clear.AppUser'
 
 # Login and logout redirect URLs
@@ -100,6 +103,7 @@ DATABASES = {
     }
 }
 
+# If we are running on Heroku, use the Database URL from the environment so that we connect to Postgres
 if "DATABASE_URL" in os.environ:
     # Configure Django for DATABASE_URL environment variable.
     DATABASES["default"] = dj_database_url.config()

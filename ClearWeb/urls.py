@@ -19,7 +19,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 urlpatterns = [
+    # Include the Clear URLs at the root
     path('', include('Clear.urls')),
+    # Redirect the default page to the inhalers page (retain the /inhalers URL segment for consistency)
     path('', RedirectView.as_view(url='/inhalers')),
     # Standard Django auth routes to use for login/logout
     # path('clear/', include("django.contrib.auth.urls")),
