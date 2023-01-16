@@ -22,8 +22,9 @@ class RegistrationTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'clear/registration/register.html')
 
-    # Test that the registration form
+    # Test the registration form
     def test_post_registration_form(self):
+        # Post the registration form
         response = self.client.post(
             reverse('register'),
             {
@@ -39,6 +40,7 @@ class RegistrationTest(TestCase):
         # Check we get a 302 redirect back after we submit the registration form
         self.assertEqual(response.status_code, 302)
 
+        # Check we have one user and that the user attributes match the posted data
         users = get_user_model().objects.all()
         self.assertEqual(users.count(), 1)
         self.assertEqual(users[0].username, self.username)
@@ -75,16 +77,19 @@ class UserInhalerTest(TestCase):
             puffs_remaining=2,
             puffs_per_day=1,
         )
+        # Test that logging a puff increments puffs_today and decrements puffs_remaining
         self.test_user_inhaler.log_puff(self.test_user_inhaler.id)
         updated_user_inhaler = UserInhaler.objects.get(pk=self.test_user_inhaler.id)
         self.assertEqual(updated_user_inhaler.puffs_today, 1)
         self.assertEqual(updated_user_inhaler.puffs_remaining, 1)
 
+        # Test that logging a puff increments puffs_today and decrements puffs_remaining to zero
         self.test_user_inhaler.log_puff(self.test_user_inhaler.id)
         updated_user_inhaler = UserInhaler.objects.get(pk=self.test_user_inhaler.id)
         self.assertEqual(updated_user_inhaler.puffs_today, 2)
         self.assertEqual(updated_user_inhaler.puffs_remaining, 0)
 
+        # Test that logging an additional puff does not increment puffs_today and does not decrement puffs_remaining
         self.test_user_inhaler.log_puff(self.test_user_inhaler.id)
         updated_user_inhaler = UserInhaler.objects.get(pk=self.test_user_inhaler.id)
         self.assertEqual(updated_user_inhaler.puffs_today, 2)
