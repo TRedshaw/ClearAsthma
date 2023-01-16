@@ -73,23 +73,28 @@ class PollutionView(LoginRequiredMixin, TemplateView):
         return context
 
 
+# SettingsView codes for the backend of the Settings page, adding all of its functionality
 class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'clear/main/settings.html'
     user_form = SettingsForm
     login_url = '/login/'
+
     def get(self, request):
         user = get_object_or_404(AppUser, id = request.user.id)
         inhalers = UserInhaler.objects.filter(user_id = user.id)
         user_form = self.user_form(instance = user)
         return render(request, self.template_name, context= {"form":user_form,"inhalers":inhalers})
 
+    # Post function sends all the appropriate data added by the user in Settings to the database
     def post(self,request):
         print("post inside")
         user = get_object_or_404(AppUser, id = request.user.id)
         form_class = SettingsForm(request.POST,instance = user)
+        
         if form_class.is_valid():
             print(request.POST)
             form_class.save()
+            # Links the inhaler_id, inhaler_type etc, with appropriate data from database
             inhaler_id = request.POST.getlist('inhaler_id')
             print("POST inhaler_id:", inhaler_id)
             inhaler_type = request.POST.getlist('inhaler_type')
@@ -97,6 +102,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             puff_remaining = request.POST.getlist('puff_remaining')
             puffs = request.POST.getlist('puffs')
             per_day = request.POST.getlist('per_day')
+
             if inhaler_type and puff_remaining and per_day:
                 print("POST inside:")
                 all_user_inhalers = [{
@@ -107,17 +113,22 @@ class SettingsView(LoginRequiredMixin, UpdateView):
                 }
                     for inhaler_id, type, puff_remaining, per_day in
                     zip(inhaler_id, inhaler_type, puff_remaining, per_day)]
+
                 for i in all_user_inhalers:
                     obj = get_object_or_404(UserInhaler, id=i['inhaler_id'])
                     obj.inhaler_type = i['type']
                     obj.puffs_per_day = i['per_day']
                     obj.puffs_remaining = i['puff_remaining']
                     obj.save()
+
+                # Sends message to tell the user the settings have been updated successfully once they have hit the ‘Save’ button
                 messages.warning(request, 'User settings has been updated successfully')
                 return redirect('settings')
+
             messages.warning(request, 'User settings has been updated successfully')
             return redirect('settings')
 
+        # Otherwise sends message to tell the user to fill all fields
         else:
             messages.error(request, 'Please fill in all required fields')
             return redirect('settings')
@@ -161,6 +172,10 @@ def getIDfromInhalerType(inhaler_type):
         print(id)
     inhaler_id = str(inhaler_ids[0].id)
     return inhaler_id
+
+
+# add_inhaler function adds an inhaler and uses POST to add the specific data for that inhaler to that inhaler
+# (e.g. ‘Puffs remaining’). This function is used to add inhalers via the Settings page
 def add_inhaler(request):
     print(add_inhaler)
     user_id = request.user.id
@@ -171,6 +186,8 @@ def add_inhaler(request):
     puff_remaining = request.POST.get('Puffs_Remaining')
     per_day = request.POST.get('Per_Day')
 
+    # If loop to check that all required fields of the ‘Add Inhaler’ pop-up of the Settings page have been
+    # filled in order to update the database with new data
     if inhaler_id and puff_remaining and per_day:
         obj = UserInhaler.objects.create(
             user_id=user_id,
@@ -184,6 +201,10 @@ def add_inhaler(request):
 
     messages.error(request, 'Please fill in all required fields')
     return redirect('settings')
+
+
+# Delete_inhaler function gets the specific id of the inhaler user wants to delete and deletes it from the
+# database and hence the Settings and Inhaler pages
 def delete_inhaler(request, *args, **kwargs):
     id = kwargs.get('id')
     obj = get_object_or_404(UserInhaler, id=id)
