@@ -33,3 +33,8 @@ Youtube Tutorial Series: https://www.youtube.com/watch?v=qDwdMDQ8oX4&list=PL-osi
 Deployment Documentation: https://devcenter.heroku.com/categories/python-support
 
 Django for Beginners Book: 'Django for Beginners 4.0', William.S.Vincent, ISBN: 9781983172663
+
+Deployment Documentation: https://devcenter.heroku.com/categories/python-support
+
+All Pollution Data From: London Air Quality Index (AQI) and United Kingdom Air Pollution | IQAir. Available at: https://www.iqair.com/uk/england/london.
+

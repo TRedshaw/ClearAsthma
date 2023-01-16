@@ -39,7 +39,7 @@ urlpatterns = [
     path('pollution_levels/update/', views.updatePollutionLevels, name='update_pollution_levels'),
     # Custom Pollution Info view
     path('pollution/', views.PollutionView.as_view(), name='pollution'),
-
+    #get the returned updated JSON variable from get_borough_map()
     path('getboroughdata/', views.BoroughView, name='getboroughdata'),
 
 
